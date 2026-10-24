@@ -1,3 +1,5 @@
+import type { Component } from 'vue'
+
 export interface Meta {
   description?: string
   date?: string
@@ -30,7 +32,11 @@ const meta = import.meta.glob<Meta>(['/content/**/{*,.*}.md', '/content/.*/**/{*
   eager: true,
   import: 'frontmatter',
 })
-const texts = import.meta.glob(
+const pages = import.meta.glob<Component>(['/content/**/{*,.*}.md', '/content/.*/**/{*,.*}.md'], {
+  query: '?page',
+  import: 'default',
+})
+const texts = import.meta.glob<string>(
   [
     '/content/**/{*,.*}',
     '/content/.*/**/{*,.*}',
@@ -111,4 +117,8 @@ export function list(dir: DirEntry, opts: { all: boolean }): Entry[] {
   return dir.children
     .filter((entry) => !entry.meta.hidden && (opts.all || !entry.name.startsWith('.')))
     .sort(compare)
+}
+
+export function loadPage(file: FileEntry): Promise<Component | string> {
+  return (pages[file.source] ?? texts[file.source])!()
 }

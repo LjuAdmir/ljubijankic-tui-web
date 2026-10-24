@@ -2,6 +2,7 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { parse } from '@/lib/parse'
 import { findCommand } from '@/commands'
+import type { FileEntry } from '@/lib/fs'
 import type { CommandContext, Line } from '@/commands/types'
 
 export type OutputEntry =
@@ -13,6 +14,7 @@ export const useTerminalStore = defineStore('terminal', () => {
   const previousCwd = ref('~')
   const output = ref<OutputEntry[]>([])
   const mode = ref<'shell' | 'pager' | 'program'>('shell')
+  const openFile = ref<FileEntry | null>(null)
   let nextId = 0
 
   function print(...lines: Line[]) {
@@ -27,6 +29,11 @@ export const useTerminalStore = defineStore('terminal', () => {
     const target = path === '-' ? previousCwd.value : path
     previousCwd.value = cwd.value
     cwd.value = target
+  }
+
+  function open(file: FileEntry) {
+    openFile.value = file
+    mode.value = 'pager'
   }
 
   async function execute(input: string | string[]) {
@@ -45,9 +52,9 @@ export const useTerminalStore = defineStore('terminal', () => {
       return
     }
 
-    const ctx: CommandContext = { cwd: cwd.value, cd, print, clear }
+    const ctx: CommandContext = { cwd: cwd.value, cd, print, open, clear }
     await command.run(args, ctx)
   }
 
-  return { cwd, previousCwd, output, mode, execute }
+  return { cwd, previousCwd, output, mode, openFile, execute }
 })

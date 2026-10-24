@@ -116,7 +116,10 @@ const meta = import.meta.glob<Meta>(['/content/**/{*,.*}.md', '/content/.*/**/{*
   eager: true,
   import: 'frontmatter',
 })
-const pages = import.meta.glob(['/content/**/{*,.*}.md', '/content/.*/**/{*,.*}.md'])
+const pages = import.meta.glob(['/content/**/{*,.*}.md', '/content/.*/**/{*,.*}.md'], {
+  query: '?page',
+  import: 'default',
+})
 const texts = import.meta.glob(
   [
     '/content/**/{*,.*}',
@@ -131,7 +134,7 @@ const texts = import.meta.glob(
 - Vite only accepts literal glob arguments, so patterns can't be shared through variables.
 
 - `meta` is bundled upfront and is small: it builds the tree used by `ls`, `tree`, `cd`, and completion.
-- `pages` and `texts` are lazy: content is only loaded when a file is opened. The keys of `texts` are known upfront, so plain text files still appear in the tree.
+- `pages` and `texts` are lazy: content is only loaded when a file is opened. `pages` imports with `?page` (also added to the Markdown plugin's `include`), so it is a separate module from the eager `meta` import. Without it, the eager import pulls every page into the main bundle and the lazy chunks are never split off. The keys of `texts` are known upfront, so plain text files still appear in the tree.
 - Directory entries are derived from file paths, with metadata from their `index.md`.
 - Vite's globs skip dot paths by default. `{*,.*}` adds dotfiles, and the `/content/.*/**` patterns add top-level dot directories like `.ssh/`. Negations need the same forms. Dot directories nested deeper (`projects/.drafts/`) are not picked up.
 - `unplugin-vue-markdown` exports each frontmatter field separately. A `frontmatterPreprocess` hook in `vite.config.ts` also exports them as one `frontmatter` object.
@@ -362,7 +365,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **2.3** `cd` (including `cd -` via `previousCwd`) and `pwd`. The prompt shows the cwd.
 - [x] **2.4** `ls` and `ls -a`, always detailed, with clickable directories.
 - [x] **2.5** `tree`.
-- [ ] **2.6** `PromptBreadcrumb` with clickable path segments.
+- [x] **2.6** `PromptBreadcrumb` with clickable path segments.
 
 ### 3. Pager
 

@@ -1,3 +1,5 @@
+import type { FileEntry } from '@/lib/fs'
+
 type Style = 'dir' | 'file' | 'error' | 'muted' | 'accent'
 
 export type Segment =
@@ -11,6 +13,7 @@ export interface CommandContext {
   cwd: string
   cd(path: string): void
   print(...lines: Line[]): void
+  open(file: FileEntry): void
   clear(): void
 }
 

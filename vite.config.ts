@@ -10,6 +10,8 @@ export default defineConfig({
   plugins: [
     vue({ include: [/\.vue$/, /\.md$/] }),
     Markdown({
+      // pages are imported again as `?page` so their content lands in lazy chunks, see lib/fs.ts
+      include: [/\.md$/, /\.md\?page$/],
       // also export the frontmatter as one object, for import.meta.glob(..., { import: 'frontmatter' })
       frontmatterPreprocess: (frontmatter, options, _id, defaults) => ({
         head: defaults(frontmatter, options),

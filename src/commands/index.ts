@@ -1,4 +1,5 @@
 import type { Command } from './types'
+import cat from './cat'
 import cd from './cd'
 import clear from './clear'
 import echo from './echo'
@@ -7,7 +8,7 @@ import ls from './ls'
 import pwd from './pwd'
 import tree from './tree'
 
-const commands: Command[] = [cd, clear, echo, help, ls, pwd, tree]
+const commands: Command[] = [cat, cd, clear, echo, help, ls, pwd, tree]
 
 export function allCommands(): Command[] {
   return commands

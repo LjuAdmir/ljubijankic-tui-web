@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildTree, list, resolve, root } from '../fs'
+import { buildTree, list, loadPage, resolve, root, type FileEntry } from '../fs'
 
 const tree = buildTree(
   {
@@ -105,5 +105,10 @@ describe('content', () => {
   it('builds the tree from content/', () => {
     expect(resolve('~/articles/hello-world.md', '~')?.meta.description).toBeTruthy()
     expect(root.children.length).toBeGreaterThan(0)
+  })
+
+  it('loads a markdown page as a component', async () => {
+    const page = await loadPage(resolve('~/about.md', '~') as FileEntry)
+    expect(typeof page).toBe('object')
   })
 })
