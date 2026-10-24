@@ -330,8 +330,8 @@ Each milestone ends with something runnable. Each milestone is split into small 
 
 ### 1. Shell layout
 
-- [ ] **1.1** Scaffold with `create-vue` (TS, Router, Pinia, Vitest, ESLint + Prettier). Remove the demo content (HelloWorld, AboutView, icons, demo store).
-- [ ] **1.2** Install `@webtui/css` and `@webtui/theme-catppuccin`, set up `main.css` with the layer order, and put `data-webtui-theme="catppuccin-mocha"` on `<html>`.
+- [x] **1.1** Scaffold with `create-vue` (TS, Router, Pinia, Vitest, ESLint + Prettier). Remove the demo content (HelloWorld, AboutView, icons, demo store).
+- [x] **1.2** Install `@webtui/css` and `@webtui/theme-catppuccin`, set up `main.css` with the layer order, and put `data-webtui-theme="catppuccin-mocha"` on `<html>`.
 - [ ] **1.3** `lib/parse.ts` with tests.
 - [ ] **1.4** Terminal store skeleton (`cwd`, `output`, `mode`, `execute`), the command registry, and "command not found".
 - [ ] **1.5** `TerminalView`, `OutputLine`, `PromptLine` and a static `BottomBar`: scrollback on top, prompt pinned at the bottom, Enter runs the input. On desktop, typing focuses the prompt; touch devices don't auto-focus.
