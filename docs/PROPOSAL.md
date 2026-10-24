@@ -151,7 +151,7 @@ Every clickable element maps to one of these commands.
 |---|---|
 | `help [command]` | List commands (each clickable), or show usage for one |
 | `clear` | Clear the scrollback |
-| `history` | Show stored command history |
+| `history [-c]` | Show the commands you typed (numbered, click to rerun); `-c` clears them |
 | `lifefetch` | Home screen (see §3) |
 | `theme [name]` | List themes, or switch theme |
 | `whoami`, `date`, `echo <text>` | What you'd expect |
@@ -231,7 +231,7 @@ On desktop the page captures the keyboard: typing anywhere goes to the prompt.
 |---|---|
 | `Enter` | Run command |
 | `Tab` | Complete command or path; on ambiguity, list candidates |
-| `↑` / `↓` | Walk through history |
+| `↑` / `↓` | Walk through history; with text typed, only commands starting with it |
 | `Ctrl+R` | Fuzzy search through history |
 | `Ctrl+L` | Clear the screen |
 | `Ctrl+C` | Cancel the current line (or stop `matrix` / `sl`). Plain copy still works when text is selected |

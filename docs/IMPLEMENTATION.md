@@ -243,7 +243,7 @@ Clicking anything calls `execute(command)`. That way typed and clicked commands 
 
 One `keydown` listener on `window`, switching on `store.mode`:
 
-- `shell`: printable keys focus the prompt input (desktop only); handles `Tab`, `↑`/`↓`, `Ctrl+R/L/C/U/A/E`.
+- `shell`: printable keys focus the prompt input (desktop only); handles `Tab`, `Ctrl+R/L/C/U/A/E`. `↑`/`↓` are handled on the input itself in `PromptLine` (`@keydown.up/down`), since they only matter while typing.
 - `pager`: `q`/`Esc` close, `j`/`k`/`↑`/`↓` one line, `Space`/`PgDn`/`PgUp` one page (minus a line), `g`/`G`/`Home`/`End` top and bottom, `s` share. Scrolling is instant. Keys are ignored with Ctrl/Alt/Meta held, and `Space`/`Enter` on a focused button or link keep their normal behaviour. `FilePager` exposes its scroll container and `TerminalView` passes it to `useKeyboard`. The key hints on the pager's bottom border are hidden on touch devices. The pager body is a normal scroll container (`overflow-y: auto`) and the keys just call `scrollBy`/`scrollTo` on it. Mouse wheel, trackpad and touch therefore work natively; nothing intercepts `wheel` or touch events.
 
 **Scrollbars.** `ScrollArea.vue` wraps the pager body and the scrollback. It hides the native scrollbar and draws a text one instead: a `│` track and a `█` thumb one column wide, sized to the visible part in whole lines, and shown only when the content overflows. The thumb can be dragged, and clicking the track jumps there. Sizes come from the `scroll` event and a `ResizeObserver` on the viewport and its content (images loading, new output). In the pager the track sits on the box's right border, and the bottom border shows the scroll percentage.
@@ -257,9 +257,12 @@ If interactive input is ever needed, it's another `mode`.
 
 ### History (`composables/useHistory.ts`)
 
-- Array capped at 50, newest last, no consecutive duplicates.
-- Saved to `localStorage` key `tui.history` through `lib/storage.ts`, which wraps every access in `try/catch` so private mode or blocked storage doesn't break the site.
-- `↑`/`↓` walk an index. `Ctrl+R` opens `HistorySearch.vue`, which ranks entries with `fuzzy.ts`.
+- Only typed commands are recorded (`PromptLine` adds them on submit); clicks and URL routing aren't.
+- Array capped at 50, newest last, trimmed, no empty entries or consecutive duplicates. The list is module-level state, shared by the prompt and the `history` command; the `↑`/`↓` position is per caller.
+- Saved to `localStorage` key `tui.history` through `lib/storage.ts`, which wraps every access in `try/catch` so private mode or blocked storage doesn't break the site, and skips storage while prerendering.
+- `↑`/`↓` are a prefix search (zsh/fish style): the text typed before the first `↑` filters the entries, each command shows once (its newest use), and `↓` past the newest entry restores the typed text. Typing or submitting starts over.
+- `history` prints a numbered list (bash style), each entry clickable to run it again. `history -c` clears memory and storage.
+- `Ctrl+R` opens `HistorySearch.vue`, which ranks entries with `fuzzy.ts`.
 
 ### Completion (`lib/complete.ts`)
 
@@ -334,14 +337,15 @@ GitHub Pages serves `404.html` for any path without a file, including directory 
 
 ## 8. Testing
 
-Vitest, on `src/lib/` only:
+Vitest, on `src/lib/` and `useHistory`:
 
 - `share.ts`: clipboard on desktop, share sheet on touch, cancelled sheet, blocked clipboard.
 - `fs.ts`: `resolve` with `~`, `$HOME`, `..` past root, `.`, trailing slashes, relative vs absolute, hidden entries, files vs dirs, `index.md` not listed, plain text files present, `name` override resolves by display name; `urlFor` / `fromUrl` round trip.
 - `parse.ts`: whitespace, quoted args, flags.
 - `complete.ts`: single match, common prefix, no match, directories get `/`.
 - `fuzzy.ts`: ranking order for typical queries.
-- History cap of 50 and de-duplication.
+- `storage.ts`: JSON round trip, missing key, invalid JSON, blocked storage.
+- `useHistory`: cap of 50, de-duplication, persistence and loading, clear, prefix walk with draft restore, each command once.
 
 No component tests in v1; UI is checked by hand in the browser.
 
@@ -404,7 +408,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 
 ### 5. Terminal comfort
 
-- [ ] **5.1** `LifeFetch` and the `lifefetch`/`neofetch` command. `goHome` is shared by `cd`, `cd ~` and `cd $HOME`, and runs on first visit.
+- [x] **5.1** `LifeFetch` and the `lifefetch`/`neofetch` command. `goHome` is shared by `cd`, `cd ~` and `cd $HOME`, and runs on first visit.
   - Every click that leads home (breadcrumb `~`, `ls`/`tree` entries pointing at `~`, bottom bar `home`) runs just `cd ~`, which clears the screen and shows lifefetch. Until then they run `cd ~` then `ls`.
 - [ ] **5.2** `lib/storage.ts` and `useHistory` (cap 50, no consecutive duplicates) with tests; `↑`/`↓` and the `history` command.
 - [ ] **5.3** `lib/fuzzy.ts` with tests; "did you mean" for unknown commands.
