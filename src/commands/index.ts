@@ -5,8 +5,9 @@ import echo from './echo'
 import help from './help'
 import ls from './ls'
 import pwd from './pwd'
+import tree from './tree'
 
-const commands: Command[] = [cd, clear, echo, help, ls, pwd]
+const commands: Command[] = [cd, clear, echo, help, ls, pwd, tree]
 
 export function allCommands(): Command[] {
   return commands

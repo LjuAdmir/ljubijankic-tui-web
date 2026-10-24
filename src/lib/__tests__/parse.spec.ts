@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { parse, tokenize } from '../parse'
+import { hasFlag, parse, tokenize } from '../parse'
 
 describe('tokenize', () => {
   it('splits on any whitespace and ignores extra spaces', () => {
@@ -45,5 +45,23 @@ describe('parse', () => {
 
   it('returns an empty name for blank input', () => {
     expect(parse('  ')).toEqual({ name: '', args: [] })
+  })
+})
+
+describe('hasFlag', () => {
+  it('finds short flags alone or grouped', () => {
+    expect(hasFlag(['-a'], 'a', 'all')).toBe(true)
+    expect(hasFlag(['-la'], 'a', 'all')).toBe(true)
+    expect(hasFlag(['-l', '-a', 'path'], 'a', 'all')).toBe(true)
+  })
+
+  it('finds the long flag', () => {
+    expect(hasFlag(['--all'], 'a', 'all')).toBe(true)
+  })
+
+  it('ignores other flags and plain args', () => {
+    expect(hasFlag(['-l'], 'a', 'all')).toBe(false)
+    expect(hasFlag(['--human-readable'], 'a', 'all')).toBe(false)
+    expect(hasFlag(['about.md'], 'a', 'all')).toBe(false)
   })
 })

@@ -1,17 +1,14 @@
 import { list, resolve, type Entry } from '@/lib/fs'
-import type { Command, Line, Segment } from './types'
+import { hasFlag } from '@/lib/parse'
+import { entrySegment } from './segments'
+import type { Command, Line } from './types'
 
 function format(entry: Entry, label: string, width: number): Line {
   const type = entry.kind === 'dir' ? 'd' : '-'
   const date = entry.meta.date?.slice(0, 10) ?? '—'
-  const name: Segment =
-    entry.kind === 'dir'
-      ? { text: label, command: [`cd ${entry.path}`, 'ls'], style: 'dir' }
-      : { text: label, style: 'file' }
-
   return [
     { text: `${type}  ${date.padEnd(10)}  `, style: 'muted' },
-    name,
+    entrySegment(entry, label),
     { text: `${' '.repeat(width - label.length + 2)}${entry.meta.description ?? '—'}` },
   ]
 }
@@ -21,7 +18,7 @@ export default {
   summary: 'List files',
   usage: 'ls [-a] [path]',
   run(args, ctx) {
-    const all = args.some((arg) => /^-[^-]*a/.test(arg) || arg === '--all')
+    const all = hasFlag(args, 'a', 'all')
     const path = args.find((arg) => !arg.startsWith('-')) ?? '.'
     const target = resolve(path, ctx.cwd)
     if (!target) {

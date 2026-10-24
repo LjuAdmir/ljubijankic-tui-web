@@ -34,3 +34,7 @@ export function parse(input: string): ParsedInput {
   const [name = '', ...args] = tokenize(input)
   return { name, args }
 }
+
+export function hasFlag(args: string[], short: string, long: string): boolean {
+  return args.some((arg) => arg === `--${long}` || (/^-[^-]/.test(arg) && arg.includes(short)))
+}
