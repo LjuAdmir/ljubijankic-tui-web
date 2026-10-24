@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue'
 import { useTerminalStore } from '@/stores/terminal'
+import PromptBreadcrumb from './PromptBreadcrumb.vue'
 import PromptLabel from './PromptLabel.vue'
 
 const store = useTerminalStore()
@@ -18,7 +19,7 @@ defineExpose({ focus: () => inputEl.value?.focus() })
 
 <template>
   <form class="prompt-line" @submit.prevent="submit">
-    <PromptLabel :cwd="store.cwd" />
+    <PromptLabel :cwd="store.cwd"><PromptBreadcrumb /></PromptLabel>
     <input
       ref="prompt-input"
       v-model="input"

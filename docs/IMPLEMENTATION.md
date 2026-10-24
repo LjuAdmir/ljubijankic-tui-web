@@ -361,7 +361,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **2.2** `lib/fs.ts`: tree building, `resolve`, `list`, `name` override, plain text files, with tests.
 - [x] **2.3** `cd` (including `cd -` via `previousCwd`) and `pwd`. The prompt shows the cwd.
 - [x] **2.4** `ls` and `ls -a`, always detailed, with clickable directories.
-- [ ] **2.5** `tree`.
+- [x] **2.5** `tree`.
 - [ ] **2.6** `PromptBreadcrumb` with clickable path segments.
 
 ### 3. Pager
@@ -383,6 +383,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 ### 5. Terminal comfort
 
 - [ ] **5.1** `LifeFetch` and the `lifefetch`/`neofetch` command. `goHome` is shared by `cd`, `cd ~` and `cd $HOME`, and runs on first visit.
+  - Every click that leads home (breadcrumb `~`, `ls`/`tree` entries pointing at `~`, bottom bar `home`) runs just `cd ~`, which clears the screen and shows lifefetch. Until then they run `cd ~` then `ls`.
 - [ ] **5.2** `lib/storage.ts` and `useHistory` (cap 50, no consecutive duplicates) with tests; `↑`/`↓` and the `history` command.
 - [ ] **5.3** `lib/fuzzy.ts` with tests; "did you mean" for unknown commands.
 - [ ] **5.4** `HistorySearch` (`Ctrl+R`).

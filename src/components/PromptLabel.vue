@@ -4,13 +4,18 @@ defineProps<{ cwd: string }>()
 
 <template>
   <span class="prompt-label">
-    <span class="user">visitor@ljubijankic</span> <span class="path">{{ cwd }}</span> &gt;
+    <span class="user">visitor@ljubijankic</span>
+    <span class="path">
+      <slot>{{ cwd }}</slot>
+    </span>
+    <span>&gt;</span>
   </span>
 </template>
 
 <style scoped>
 .prompt-label {
-  display: inline-block;
+  display: inline-flex;
+  gap: 1ch;
   white-space: nowrap;
   margin-right: 1ch;
 }
