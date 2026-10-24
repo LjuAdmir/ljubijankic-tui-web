@@ -1,6 +1,8 @@
+type Style = 'dir' | 'file' | 'error' | 'muted' | 'accent'
+
 export type Segment =
-  | { text: string; style?: 'dir' | 'file' | 'error' | 'muted' | 'accent' }
-  | { text: string; command: string }
+  | { text: string; style?: Style }
+  | { text: string; command: string | string[]; style?: Style }
   | { text: string; href: string }
 
 export type Line = Segment[]

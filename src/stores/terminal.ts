@@ -29,7 +29,11 @@ export const useTerminalStore = defineStore('terminal', () => {
     cwd.value = target
   }
 
-  async function execute(input: string) {
+  async function execute(input: string | string[]) {
+    for (const line of [input].flat()) await run(line)
+  }
+
+  async function run(input: string) {
     output.value.push({ id: nextId++, kind: 'prompt', cwd: cwd.value, input })
 
     const { name, args } = parse(input)

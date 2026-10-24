@@ -17,7 +17,7 @@ const store = useTerminalStore()
         <button
           v-if="'command' in segment"
           type="button"
-          class="command"
+          :class="['command', segment.style]"
           @click="store.execute(segment.command)"
         >
           {{ segment.text }}
