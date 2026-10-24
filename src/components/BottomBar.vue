@@ -1,12 +1,13 @@
 <script setup lang="ts">
+import { withBase } from '@/lib/site'
 import { useTerminalStore } from '@/stores/terminal'
 
 const links = [
   { label: 'home', command: ['cd ~', 'ls'] },
-  { label: 'about me', command: 'open ~/about.md', href: '/about' },
+  { label: 'about me', command: 'open ~/about.md', href: withBase('/about') },
   { label: 'projects', command: ['cd ~/projects', 'ls'] },
   { label: 'articles', command: ['cd ~/articles', 'ls'] },
-  { label: 'contact', command: 'open ~/contact.md', href: '/contact' },
+  { label: 'contact', command: 'open ~/contact.md', href: withBase('/contact') },
 ]
 const year = new Date().getFullYear()
 

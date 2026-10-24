@@ -6,7 +6,9 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import { routes } from './router'
 
-export const createApp = ViteSSG(App, { routes }, ({ app, initialState }) => {
+const base = import.meta.env.BASE_URL
+
+export const createApp = ViteSSG(App, { routes, base }, ({ app, initialState }) => {
   const pinia = createPinia()
   app.use(pinia)
 

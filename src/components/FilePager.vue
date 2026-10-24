@@ -3,7 +3,7 @@ import { computed, ref, useTemplateRef } from 'vue'
 import { useHead, useSeoMeta } from '@unhead/vue'
 import { loadPage, urlFor, type FileEntry } from '@/lib/fs'
 import { share } from '@/lib/share'
-import { siteName, siteUrl } from '@/lib/site'
+import { siteName, siteUrl, withBase } from '@/lib/site'
 import { useTerminalStore } from '@/stores/terminal'
 import ScrollArea from './ScrollArea.vue'
 
@@ -30,7 +30,7 @@ useHead({ link: [{ rel: 'canonical', href: url }] })
 const shareLabel = ref('[share]')
 
 async function shareFile() {
-  const result = await share(location.origin + urlFor(props.file), title)
+  const result = await share(location.origin + withBase(urlFor(props.file)), title)
   if (result === 'shared') return
   shareLabel.value = result === 'copied' ? '[copied]' : '[copy failed]'
   setTimeout(() => (shareLabel.value = '[share]'), 2000)

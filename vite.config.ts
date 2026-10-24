@@ -8,6 +8,8 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // the deploy workflow sets BASE_PATH while the site lives on a github.io subpath
+  base: `${process.env.BASE_PATH ?? ''}/`,
   plugins: [
     vue({ include: [/\.vue$/, /\.md$/] }),
     Markdown({

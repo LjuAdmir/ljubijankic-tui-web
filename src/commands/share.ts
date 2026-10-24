@@ -1,5 +1,6 @@
 import { resolve, urlFor } from '@/lib/fs'
 import { share } from '@/lib/share'
+import { withBase } from '@/lib/site'
 import type { Command } from './types'
 
 export default {
@@ -22,7 +23,7 @@ export default {
       return
     }
 
-    const url = location.origin + urlFor(entry)
+    const url = location.origin + withBase(urlFor(entry))
     const result = await share(url, entry.meta.title ?? entry.name)
     if (result === 'copied')
       ctx.print([

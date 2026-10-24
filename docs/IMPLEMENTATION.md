@@ -31,9 +31,10 @@ Exact versions are pinned when the project is scaffolded.
 The `create-vue` defaults, plus `content/`, `src/commands/` and `src/lib/`.
 
 ```
+.github/workflows/
+  deploy.yml              # GitHub Pages deploy
 content/                  # the virtual filesystem (md + frontmatter, colocated images)
-public/
-  CNAME
+public/                   # favicon, og images
 src/
   assets/
     main.css              # WebTUI layer order + imports + theme
@@ -342,10 +343,11 @@ No component tests in v1; UI is checked by hand in the browser.
 
 ## 9. Build and deploy
 
-- `npm run test`, then `npm run build` (`vite-ssg build`, then copy `index.html` → `404.html`).
-- `public/CNAME` contains the custom domain.
-- GitHub Actions workflow on push to `main`: checkout → setup node → install → test → build → `actions/upload-pages-artifact` → `actions/deploy-pages`.
-- Pages source set to "GitHub Actions" in the repo settings.
+- `npm run build` type-checks, runs `vite-ssg build`, then copies `index.html` → `404.html`.
+- `.github/workflows/deploy.yml`: checkout → setup node 24 → `configure-pages` → `npm ci` → oxlint and ESLint (no `--fix`) → `vitest run` → build → `upload-pages-artifact` → `deploy-pages`. It runs by hand from the Actions tab for now; switch the trigger to push on `main` once the domain points here.
+- `upload-pages-artifact` skips dotfiles unless `include-hidden-files: true`, which is needed for dotfile pages like `.secrets.html`.
+- **Base path.** Until the domain moves, GitHub serves the site at `<user>.github.io/<repo>/`. The workflow passes `configure-pages`' `base_path` as `BASE_PATH`, which becomes Vite's `base` and the router's base. Routes and `urlFor` never include it; `withBase` in `lib/site.ts` adds it for real `href`s and shared links. With the custom domain `base_path` is empty and everything sits at `/`. Meta tags always use `https://ljubijankic.si`.
+- **One-time setup on GitHub:** Settings → Pages → Source: "GitHub Actions". At the switch-over: remove `ljubijankic.si` from the old site's Pages settings, add it here under Settings → Pages → Custom domain, and tick "Enforce HTTPS". No `CNAME` file is needed, because GitHub ignores it for Actions deploys.
 
 ## 10. Milestones
 
@@ -392,8 +394,8 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **4.1** Routes and the `HomeView` watcher (file, directory, unknown). Opening a file pushes its URL and closing the pager goes back (or pushes `/`). Files in `ls` and the bar's `about me`/`contact` become real `href` links.
 - [x] **4.2** Switch to vite-ssg: `main.ts` uses `ViteSSG`, a route per Markdown file, Pinia state handover, flat output, and the build copies `index.html` → `404.html`.
 - [x] **4.3** Meta tags: home defaults in `App.vue`, per-file title, description, `og:*`, `twitter:card` and canonical in `FilePager`.
-- [ ] **4.4** The `share` command, the `s` key and the `[share]` button.
-- [ ] **4.5** `public/CNAME` and the GitHub Actions Pages workflow.
+- [x] **4.4** The `share` command, the `s` key and the `[share]` button.
+- [ ] **4.5** The GitHub Actions Pages workflow (manual trigger for now) and base path support for the github.io preview.
   Domain: `ljubijankic.si`, which currently points at the old site. Switch it over once this site is ready.
 
 ### 5. Terminal comfort
