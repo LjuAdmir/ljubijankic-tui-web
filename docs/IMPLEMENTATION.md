@@ -66,7 +66,7 @@ src/
     fs.ts                 # build tree, resolve paths, list
     parse.ts              # split input into command + args
     complete.ts           # tab completion
-    fuzzy.ts              # Ctrl+R matching
+    fuzzy.ts              # typo distance, Ctrl+R matching
     storage.ts            # safe localStorage get/set
     site.ts               # site name and URL, for meta tags
   App.vue
@@ -210,7 +210,7 @@ So `ls` returns file names as `href` segments (real links, see §7) and director
 
 ### Registry
 
-`commands/index.ts` imports each command file and exports `findCommand(name)` and `allCommands()`. Unknown names get a "did you mean" suggestion from the closest match by `fuzzy.ts`.
+`commands/index.ts` imports each command file and exports `findCommand(name)`, `allCommands()` and `suggestCommand(name)`. Unknown names get a "did you mean" suggestion: the closest visible command name or alias by edit distance (`fuzzy.ts`), main names winning ties over aliases (`lss` → `ls`, not `less`), then alphabetical. Hidden commands are never suggested. The suggestion keeps the typed arguments and is clickable: `lss -a` → "Did you mean `ls -a`?".
 
 Aliases: `cat`/`open`/`less` are one command; `neofetch` is an alias of `lifefetch`.
 
@@ -272,7 +272,10 @@ If interactive input is ever needed, it's another `mode`.
 
 ### Fuzzy (`lib/fuzzy.ts`)
 
-A small subsequence matcher with a simple score (consecutive and word-start matches rank higher). It's used by `Ctrl+R` and "did you mean". It's small enough that a dependency isn't worth it.
+Two small functions, no dependency:
+
+- `distance` / `closest` for "did you mean": edit distance where swapping two neighbouring letters counts as one edit (`claer` → `clear`). A suggestion has to be within one edit for words up to four letters, two for longer ones.
+- A subsequence matcher with a simple score (consecutive and word-start matches rank higher) for `Ctrl+R`, added with 5.4.
 
 ## 6. Theming
 
@@ -337,13 +340,14 @@ GitHub Pages serves `404.html` for any path without a file, including directory 
 
 ## 8. Testing
 
-Vitest, on `src/lib/` and `useHistory`:
+Vitest, on `src/lib/`, `useHistory` and the command registry:
 
 - `share.ts`: clipboard on desktop, share sheet on touch, cancelled sheet, blocked clipboard.
 - `fs.ts`: `resolve` with `~`, `$HOME`, `..` past root, `.`, trailing slashes, relative vs absolute, hidden entries, files vs dirs, `index.md` not listed, plain text files present, `name` override resolves by display name; `urlFor` / `fromUrl` round trip.
 - `parse.ts`: whitespace, quoted args, flags.
 - `complete.ts`: single match, common prefix, no match, directories get `/`.
-- `fuzzy.ts`: ranking order for typical queries.
+- `fuzzy.ts`: edit distance (including swaps), `closest` thresholds and ties; subsequence ranking for typical queries (5.4).
+- `commands/index.ts`: `suggestCommand` prefers names over aliases, skips unrelated input.
 - `storage.ts`: JSON round trip, missing key, invalid JSON, blocked storage.
 - `useHistory`: cap of 50, de-duplication, persistence and loading, clear, prefix walk with draft restore, each command once.
 
@@ -410,7 +414,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 
 - [x] **5.1** `LifeFetch` and the `lifefetch`/`neofetch` command. `goHome` is shared by `cd`, `cd ~` and `cd $HOME`, and runs on first visit.
   - Every click that leads home (breadcrumb `~`, `ls`/`tree` entries pointing at `~`, bottom bar `home`) runs just `cd ~`, which clears the screen and shows lifefetch. Until then they run `cd ~` then `ls`.
-- [ ] **5.2** `lib/storage.ts` and `useHistory` (cap 50, no consecutive duplicates) with tests; `↑`/`↓` and the `history` command.
+- [x] **5.2** `lib/storage.ts` and `useHistory` (cap 50, no consecutive duplicates) with tests; `↑`/`↓` and the `history` command.
 - [ ] **5.3** `lib/fuzzy.ts` with tests; "did you mean" for unknown commands.
 - [ ] **5.4** `HistorySearch` (`Ctrl+R`).
 - [ ] **5.5** `lib/complete.ts` with tests, wired to `Tab`.

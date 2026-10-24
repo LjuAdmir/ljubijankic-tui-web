@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { parse } from '@/lib/parse'
-import { findCommand } from '@/commands'
+import { findCommand, suggestCommand } from '@/commands'
 import type { FileEntry } from '@/lib/fs'
 import type { CommandContext, Line, OutputComponent } from '@/commands/types'
 
@@ -60,7 +60,15 @@ export const useTerminalStore = defineStore('terminal', () => {
 
     const command = findCommand(name)
     if (!command) {
-      print([{ text: `command not found: ${name}`, style: 'error' }])
+      const suggestion = suggestCommand(name)
+      if (!suggestion) return print([{ text: `command not found: ${name}`, style: 'error' }])
+      // keeps the arguments, so `lss -a` suggests `ls -a`
+      const fixed = suggestion + input.trim().replace(/^\S+/, '')
+      print([
+        { text: `command not found: ${name}. Did you mean `, style: 'error' },
+        { text: fixed, command: fixed },
+        { text: '?', style: 'error' },
+      ])
       return
     }
 
