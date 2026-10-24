@@ -112,21 +112,23 @@ Text, code, and images: ![screenshot](./hello-world/screenshot.png)
 No custom Vite plugin. Three `import.meta.glob` calls in `lib/fs.ts`:
 
 ```ts
-const md = ['/content/**/{*,.*}.md', '/content/.*/**/{*,.*}.md']
-const skip = '{md,png,jpg,jpeg,webp,gif,svg,avif}'
-
-const meta = import.meta.glob(md, { eager: true, import: 'frontmatter' })
-const pages = import.meta.glob(md)
+const meta = import.meta.glob<Meta>(['/content/**/{*,.*}.md', '/content/.*/**/{*,.*}.md'], {
+  eager: true,
+  import: 'frontmatter',
+})
+const pages = import.meta.glob(['/content/**/{*,.*}.md', '/content/.*/**/{*,.*}.md'])
 const texts = import.meta.glob(
   [
     '/content/**/{*,.*}',
     '/content/.*/**/{*,.*}',
-    `!/content/**/{*,.*}.${skip}`,
-    `!/content/.*/**/{*,.*}.${skip}`,
+    '!/content/**/{*,.*}.{md,png,jpg,jpeg,webp,gif,svg,avif}',
+    '!/content/.*/**/{*,.*}.{md,png,jpg,jpeg,webp,gif,svg,avif}',
   ],
   { query: '?raw', import: 'default' },
 )
 ```
+
+- Vite only accepts literal glob arguments, so patterns can't be shared through variables.
 
 - `meta` is bundled upfront and is small: it builds the tree used by `ls`, `tree`, `cd`, and completion.
 - `pages` and `texts` are lazy: content is only loaded when a file is opened. The keys of `texts` are known upfront, so plain text files still appear in the tree.
@@ -139,7 +141,8 @@ const texts = import.meta.glob(
 
 ```ts
 type Entry = DirEntry | FileEntry
-resolve(path: string, cwd: string): Entry | null   // handles ~, $HOME, .., ., absolute/relative
+buildTree(meta, texts): DirEntry                   // pure, so tests can pass their own tree
+resolve(path: string, cwd: string, from = root): Entry | null   // handles ~, $HOME, .., ., absolute/relative
 list(dir: DirEntry, opts: { all: boolean }): Entry[]
 loadPage(file: FileEntry): Promise<Component | string>   // md component or raw text
 urlFor(file: FileEntry): string                    // ~/articles/hello-world.md → /articles/hello-world
@@ -147,6 +150,10 @@ fromUrl(path: string): Entry | null
 ```
 
 `cd -` (previous directory) lives in the store, not in `resolve`.
+
+- `list` order: directories first (A–Z), then files newest first. Files without a date go last (A–Z).
+- Dot entries only show with `all`. `hidden: true` entries never show in `list`, but `resolve` still finds them.
+- Paths starting with `/` don't resolve. The root is `~`.
 
 ## 4. Commands
 
@@ -349,7 +356,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 
 ### 2. Filesystem
 
-- [ ] **2.1** `unplugin-vue-markdown` setup plus sample content (`about.md`, `contact.md`, `projects/` and `articles/` with `index.md` and one file each). Check that the globs pick up dot paths.
+- [x] **2.1** `unplugin-vue-markdown` setup plus sample content (`about.md`, `contact.md`, `projects/` and `articles/` with `index.md` and one file each). Check that the globs pick up dot paths.
 - [ ] **2.2** `lib/fs.ts`: tree building, `resolve`, `list`, `name` override, plain text files, with tests.
 - [ ] **2.3** `cd` (including `cd -` via `previousCwd`) and `pwd`. The prompt shows the cwd.
 - [ ] **2.4** `ls` and `ls -a`, always detailed, with clickable directories.
