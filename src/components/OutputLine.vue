@@ -14,8 +14,16 @@ const store = useTerminalStore()
     </template>
     <template v-else>
       <template v-for="(segment, index) in entry.line" :key="index">
+        <a
+          v-if="'command' in segment && segment.href"
+          :href="segment.href"
+          :class="['command', segment.style]"
+          @click.exact.prevent="store.execute(segment.command)"
+        >
+          {{ segment.text }}
+        </a>
         <button
-          v-if="'command' in segment"
+          v-else-if="'command' in segment"
           type="button"
           :class="['command', segment.style]"
           @click="store.execute(segment.command)"

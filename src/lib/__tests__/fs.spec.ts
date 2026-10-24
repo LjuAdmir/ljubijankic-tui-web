@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { buildTree, list, loadPage, resolve, root, type FileEntry } from '../fs'
+import { buildTree, fromUrl, list, loadPage, resolve, root, urlFor, type FileEntry } from '../fs'
 
 const tree = buildTree(
   {
@@ -98,6 +98,39 @@ describe('list', () => {
 
   it('lists plain text files', () => {
     expect(names('~/.ssh')).toEqual(['id_rsa', 'known_hosts'])
+  })
+})
+
+describe('urls', () => {
+  const url = (path: string) => urlFor(at(path) as FileEntry)
+
+  it('drops ~ and .md', () => {
+    expect(url('~/articles/hello-world.md')).toBe('/articles/hello-world')
+    expect(url('~/.secrets.md')).toBe('/.secrets')
+    expect(url('~/notes.txt')).toBe('/notes.txt')
+    expect(url('~/.ssh/id_rsa')).toBe('/.ssh/id_rsa')
+  })
+
+  it('round trips', () => {
+    for (const path of [
+      '~/about.md',
+      '~/articles/hello-world.md',
+      '~/notes.txt',
+      '~/.ssh/id_rsa',
+    ]) {
+      expect(fromUrl(url(path), tree)).toBe(at(path))
+    }
+  })
+
+  it('finds directories and ignores trailing slashes', () => {
+    expect(fromUrl('/', tree)).toBe(tree)
+    expect(fromUrl('/articles/', tree)).toBe(at('~/articles'))
+    expect(fromUrl('/articles/hello-world/', tree)).toBe(at('~/articles/hello-world.md'))
+  })
+
+  it('returns null for unknown paths', () => {
+    expect(fromUrl('/nope', tree)).toBeNull()
+    expect(fromUrl('/about.md/x', tree)).toBeNull()
   })
 })
 

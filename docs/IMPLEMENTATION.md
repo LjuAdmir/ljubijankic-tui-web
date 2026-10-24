@@ -297,11 +297,13 @@ routes: [
 `HomeView` watches the route:
 
 - `/`: no file open.
-- Matches a file (`fs.fromUrl`): set `cwd` to the file's directory, open the pager.
+- Matches a file (`fs.fromUrl`): run `cd <file's dir>` (skipped if already there) and `open <file>`, so the scrollback shows how you got there.
 - Matches a directory: run `cd <dir>` and `ls`, replace the URL with `/`.
 - Anything else: print `open: /foo: no such file` and replace the URL with `/`.
 
-Opening a file pushes its URL. Closing the pager pushes `/`. Back/forward work through the same watcher.
+Opening a file pushes its URL. Closing the pager goes back in history when the previous entry is `/`, otherwise it pushes `/`. Back/forward work through the same watcher.
+
+File entries in `ls`/`tree` output and the bottom bar's `about me`/`contact` are real `<a href>` links. A plain click runs the command; ctrl/middle-click opens the URL in a new tab.
 
 ### Prerendering
 
@@ -375,11 +377,11 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **3.1** `fs.loadPage`, plus `openFile` and the `pager` mode in the store; `cat`/`open`/`less` with the "is a directory" error.
 - [x] **3.2** `FilePager`: header (path, date, tags), rendered Markdown with images, plain text with clickable links, and a `[close]` button.
 - [x] **3.3** Pager keys in `useKeyboard` (`q`/`Esc`, `j`/`k`, `g`/`G`, `Space`, `PgUp`/`PgDn`) on a native scroll container.
-- [ ] **3.4** Files in `ls` output are clickable. The bottom bar is wired up (`home` runs `cd ~` then `ls` until 5.1). Bottom bar clicks close the pager and silently clear the screen first, so visitors only see the result of what they clicked.
+- [x] **3.4** Files in `ls` output are clickable. The bottom bar is wired up (`home` runs `cd ~` then `ls` until 5.1). Bottom bar clicks close the pager and silently clear the screen first, so visitors only see the result of what they clicked.
 
 ### 4. URLs
 
-- [ ] **4.1** Routes and the `HomeView` watcher (file, directory, unknown). Opening a file pushes its URL and closing the pager pushes `/`. Files in `ls` become real `href` links.
+- [ ] **4.1** Routes and the `HomeView` watcher (file, directory, unknown). Opening a file pushes its URL and closing the pager goes back (or pushes `/`). Files in `ls` and the bar's `about me`/`contact` become real `href` links.
 - [ ] **4.2** Switch to vite-ssg: `main.ts` uses `ViteSSG`, `includedRoutes`, flat output, and the build copies `index.html` → `404.html`.
 - [ ] **4.3** `useHead` in `FilePager` (title, description, `og:image`).
 - [ ] **4.4** The `share` command, the `s` key and the `[share]` button.

@@ -3,10 +3,10 @@ import { useTerminalStore } from '@/stores/terminal'
 
 const links = [
   { label: 'home', command: ['cd ~', 'ls'] },
-  { label: 'about me', command: 'open ~/about.md' },
+  { label: 'about me', command: 'open ~/about.md', href: '/about' },
   { label: 'projects', command: ['cd ~/projects', 'ls'] },
   { label: 'articles', command: ['cd ~/articles', 'ls'] },
-  { label: 'contact', command: 'open ~/contact.md' },
+  { label: 'contact', command: 'open ~/contact.md', href: '/contact' },
 ]
 const year = new Date().getFullYear()
 
@@ -22,16 +22,21 @@ function go(command: string | string[]) {
 <template>
   <footer class="bottom-bar">
     <nav>
-      <button
-        v-for="link in links"
-        :key="link.label"
-        type="button"
-        size-="small"
-        variant-="background1"
-        @click="go(link.command)"
-      >
-        {{ link.label }}
-      </button>
+      <template v-for="link in links" :key="link.label">
+        <a
+          v-if="link.href"
+          :href="link.href"
+          is-="button"
+          size-="small"
+          variant-="background1"
+          @click.exact.prevent="go(link.command)"
+        >
+          {{ link.label }}
+        </a>
+        <button v-else type="button" size-="small" variant-="background1" @click="go(link.command)">
+          {{ link.label }}
+        </button>
+      </template>
     </nav>
     <span class="copyright">© Ljubijankic {{ year }}</span>
   </footer>
@@ -51,6 +56,10 @@ nav {
   display: flex;
   flex-wrap: wrap;
   gap: 1ch;
+}
+
+nav a {
+  text-decoration: none;
 }
 
 .copyright {
