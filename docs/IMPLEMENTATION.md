@@ -112,10 +112,18 @@ Text, code, and images: ![screenshot](./hello-world/screenshot.png)
 No custom Vite plugin. Three `import.meta.glob` calls in `lib/fs.ts`:
 
 ```ts
-const meta = import.meta.glob('/content/**/*.md', { eager: true, import: 'frontmatter' })
-const pages = import.meta.glob('/content/**/*.md')
+const md = ['/content/**/{*,.*}.md', '/content/.*/**/{*,.*}.md']
+const skip = '{md,png,jpg,jpeg,webp,gif,svg,avif}'
+
+const meta = import.meta.glob(md, { eager: true, import: 'frontmatter' })
+const pages = import.meta.glob(md)
 const texts = import.meta.glob(
-  ['/content/**/*', '!**/*.md', '!**/*.{png,jpg,jpeg,webp,gif,svg,avif}'],
+  [
+    '/content/**/{*,.*}',
+    '/content/.*/**/{*,.*}',
+    `!/content/**/{*,.*}.${skip}`,
+    `!/content/.*/**/{*,.*}.${skip}`,
+  ],
   { query: '?raw', import: 'default' },
 )
 ```
@@ -123,7 +131,9 @@ const texts = import.meta.glob(
 - `meta` is bundled upfront and is small: it builds the tree used by `ls`, `tree`, `cd`, and completion.
 - `pages` and `texts` are lazy: content is only loaded when a file is opened. The keys of `texts` are known upfront, so plain text files still appear in the tree.
 - Directory entries are derived from file paths, with metadata from their `index.md`.
-- Check at milestone 2 that the globs pick up dot paths (`.ssh/`, `.secrets.md`). If not, add explicit patterns for them.
+- Vite's globs skip dot paths by default. `{*,.*}` adds dotfiles, and the `/content/.*/**` patterns add top-level dot directories like `.ssh/`. Negations need the same forms. Dot directories nested deeper (`projects/.drafts/`) are not picked up.
+- `unplugin-vue-markdown` exports each frontmatter field separately. A `frontmatterPreprocess` hook in `vite.config.ts` also exports them as one `frontmatter` object.
+- YAML turns `date` into a `Date`, which arrives as an ISO string.
 
 ### `lib/fs.ts` API
 
@@ -335,7 +345,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **1.3** `lib/parse.ts` with tests.
 - [x] **1.4** Terminal store skeleton (`cwd`, `output`, `mode`, `execute`), the command registry, and "command not found".
 - [x] **1.5** `TerminalView`, `OutputLine`, `PromptLine` and a static `BottomBar`: scrollback on top, prompt pinned at the bottom, Enter runs the input. On desktop, typing focuses the prompt; touch devices don't auto-focus.
-- [ ] **1.6** `echo`, `clear`, `help` (with clickable command names).
+- [x] **1.6** `echo`, `clear`, `help` (with clickable command names).
 
 ### 2. Filesystem
 
