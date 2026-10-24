@@ -262,7 +262,7 @@ If interactive input is ever needed, it's another `mode`.
 - Saved to `localStorage` key `tui.history` through `lib/storage.ts`, which wraps every access in `try/catch` so private mode or blocked storage doesn't break the site, and skips storage while prerendering.
 - `↑`/`↓` are a prefix search (zsh/fish style): the text typed before the first `↑` filters the entries, each command shows once (its newest use), and `↓` past the newest entry restores the typed text. Typing or submitting starts over.
 - `history` prints a numbered list (bash style), each entry clickable to run it again. `history -c` clears memory and storage.
-- `Ctrl+R` opens `HistorySearch.vue`, which ranks entries with `fuzzy.ts`.
+- `Ctrl+R` opens `HistorySearch.vue`, an fzf-style box above the prompt (owned by `PromptLine`). `useKeyboard` catches `Ctrl+R` in shell mode wherever focus is, so the browser never reloads. The search starts with what's in the prompt and ranks each command once with `fuzzy.match`, equal scores newest first. Up to 8 results, best at the bottom next to the `search:` line, matched letters in mauve, `x/y` count on the top border. `↑`/`Ctrl+R` move to older/worse results, `↓` back. `Enter` (or a click) puts the selection in the prompt to edit or run; `Esc` or clicking away closes it and leaves the prompt as it was.
 
 ### Completion (`lib/complete.ts`)
 
@@ -275,7 +275,7 @@ If interactive input is ever needed, it's another `mode`.
 Two small functions, no dependency:
 
 - `distance` / `closest` for "did you mean": edit distance where swapping two neighbouring letters counts as one edit (`claer` → `clear`). A suggestion has to be within one edit for words up to four letters, two for longer ones.
-- A subsequence matcher with a simple score (consecutive and word-start matches rank higher) for `Ctrl+R`, added with 5.4.
+- `match` for `Ctrl+R`: the query's letters in order, ignoring case, returning a score and the matched positions (for highlighting). Each letter scores 1, plus 3 when it follows the previous match and 2 at a word start (after a space, `/`, `.`, `_`, `-`). It tries every occurrence of the first letter, so `proj` lands on `projects`, not the `p` in `open`.
 
 ## 6. Theming
 
@@ -346,7 +346,7 @@ Vitest, on `src/lib/`, `useHistory` and the command registry:
 - `fs.ts`: `resolve` with `~`, `$HOME`, `..` past root, `.`, trailing slashes, relative vs absolute, hidden entries, files vs dirs, `index.md` not listed, plain text files present, `name` override resolves by display name; `urlFor` / `fromUrl` round trip.
 - `parse.ts`: whitespace, quoted args, flags.
 - `complete.ts`: single match, common prefix, no match, directories get `/`.
-- `fuzzy.ts`: edit distance (including swaps), `closest` thresholds and ties; subsequence ranking for typical queries (5.4).
+- `fuzzy.ts`: edit distance (including swaps), `closest` thresholds and ties; `match` positions, empty query, runs and word starts ranking.
 - `commands/index.ts`: `suggestCommand` prefers names over aliases, skips unrelated input.
 - `storage.ts`: JSON round trip, missing key, invalid JSON, blocked storage.
 - `useHistory`: cap of 50, de-duplication, persistence and loading, clear, prefix walk with draft restore, each command once.
@@ -415,7 +415,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **5.1** `LifeFetch` and the `lifefetch`/`neofetch` command. `goHome` is shared by `cd`, `cd ~` and `cd $HOME`, and runs on first visit.
   - Every click that leads home (breadcrumb `~`, `ls`/`tree` entries pointing at `~`, bottom bar `home`) runs just `cd ~`, which clears the screen and shows lifefetch. Until then they run `cd ~` then `ls`.
 - [x] **5.2** `lib/storage.ts` and `useHistory` (cap 50, no consecutive duplicates) with tests; `↑`/`↓` and the `history` command.
-- [ ] **5.3** `lib/fuzzy.ts` with tests; "did you mean" for unknown commands.
+- [x] **5.3** `lib/fuzzy.ts` with tests; "did you mean" for unknown commands.
 - [ ] **5.4** `HistorySearch` (`Ctrl+R`).
 - [ ] **5.5** `lib/complete.ts` with tests, wired to `Tab`.
 - [ ] **5.6** Shortcuts: `Ctrl+L`, `Ctrl+C`, `Ctrl+U`, `Ctrl+A`, `Ctrl+E`.

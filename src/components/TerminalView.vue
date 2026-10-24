@@ -14,7 +14,7 @@ const prompt = useTemplateRef('prompt')
 const pager = useTemplateRef('pager')
 
 useKeyboard(
-  () => prompt.value?.focus(),
+  () => prompt.value,
   () => pager.value,
 )
 

@@ -32,3 +32,33 @@ export function closest(query: string, candidates: string[]): string | undefined
   }
   return best
 }
+
+export interface Match {
+  score: number
+  positions: number[]
+}
+
+// the query's letters in order, ignoring case. Runs of letters and word starts score higher.
+export function match(query: string, text: string): Match | null {
+  const q = query.toLowerCase()
+  const t = text.toLowerCase()
+  if (!q) return { score: 0, positions: [] }
+
+  let best: Match | null = null
+  // try from every place the first letter appears, `proj` should find `projects` and not the p in `open`
+  for (let start = t.indexOf(q[0]!); start !== -1; start = t.indexOf(q[0]!, start + 1)) {
+    const positions = [start]
+    for (const char of q.slice(1)) {
+      const next = t.indexOf(char, positions.at(-1)! + 1)
+      if (next === -1) return best
+      positions.push(next)
+    }
+    const score = positions.reduce((sum, position, i) => {
+      const run = i > 0 && position === positions[i - 1]! + 1
+      const wordStart = position === 0 || /[\s/._-]/.test(t[position - 1]!)
+      return sum + 1 + (run ? 3 : 0) + (wordStart ? 2 : 0)
+    }, 0)
+    if (!best || score > best.score) best = { score, positions }
+  }
+  return best
+}

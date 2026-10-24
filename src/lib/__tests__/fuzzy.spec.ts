@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { closest, distance } from '../fuzzy'
+import { closest, distance, match } from '../fuzzy'
 
 describe('distance', () => {
   it.each([
@@ -41,5 +41,34 @@ describe('closest', () => {
     expect(closest('xyz', names)).toBeUndefined()
     expect(closest('hstoy', names)).toBe('history')
     expect(closest('txxxe', names)).toBeUndefined()
+  })
+})
+
+describe('match', () => {
+  const rank = (query: string, texts: string[]) =>
+    texts
+      .map((text) => ({ text, result: match(query, text) }))
+      .filter(({ result }) => result)
+      .sort((a, b) => b.result!.score - a.result!.score)
+      .map(({ text }) => text)
+
+  it('matches letters in order, ignoring case', () => {
+    expect(match('cdp', 'cd projects')?.positions).toEqual([0, 1, 3])
+    expect(match('CD', 'cd ~')).not.toBeNull()
+    expect(match('dc', 'cd ~')).toBeNull()
+    expect(match('lsx', 'ls')).toBeNull()
+  })
+
+  it('matches everything with an empty query', () => {
+    expect(match('', 'anything')).toEqual({ score: 0, positions: [] })
+  })
+
+  it('prefers runs and word starts', () => {
+    expect(match('proj', 'open projects/tui-web.md')?.positions).toEqual([5, 6, 7, 8])
+    expect(rank('tw', ['cat tree-wide', 'open projects/tui-web.md', 'twitter'])[0]).toBe('twitter')
+    expect(rank('cd', ['echo cloud', 'cd projects', 'ls docs'])).toEqual([
+      'cd projects',
+      'echo cloud',
+    ])
   })
 })

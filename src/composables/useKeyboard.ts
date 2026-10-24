@@ -1,16 +1,29 @@
 import { onMounted, onUnmounted } from 'vue'
 import { useTerminalStore } from '@/stores/terminal'
 
+interface Prompt {
+  focus(): void
+  search(): void
+}
+
 interface Pager {
   body: HTMLElement | null | undefined
   share(): void
 }
 
-export function useKeyboard(focusPrompt: () => void, pager: () => Pager | null | undefined) {
+export function useKeyboard(
+  prompt: () => Prompt | null | undefined,
+  pager: () => Pager | null | undefined,
+) {
   const store = useTerminalStore()
   let isTouch = false
 
   function onKeydown(event: KeyboardEvent) {
+    // handled here rather than on the input, so the browser never reloads the page
+    if (store.mode === 'shell' && event.ctrlKey && event.key === 'r') {
+      event.preventDefault()
+      return prompt()?.search()
+    }
     if (event.ctrlKey || event.metaKey || event.altKey) return
     if (store.mode === 'pager') return onPagerKey(event)
     if (isTouch || store.mode !== 'shell' || event.key.length !== 1) return
@@ -20,7 +33,7 @@ export function useKeyboard(focusPrompt: () => void, pager: () => Pager | null |
     // Space still activates a focused button or link.
     if (event.key === ' ' && target.matches('button, a')) return
 
-    focusPrompt()
+    prompt()?.focus()
   }
 
   function onPagerKey(event: KeyboardEvent) {
@@ -69,7 +82,7 @@ export function useKeyboard(focusPrompt: () => void, pager: () => Pager | null |
 
   onMounted(() => {
     isTouch = window.matchMedia('(pointer: coarse)').matches
-    if (!isTouch) focusPrompt()
+    if (!isTouch) prompt()?.focus()
     window.addEventListener('keydown', onKeydown)
   })
 

@@ -240,7 +240,7 @@ On desktop the page captures the keyboard: typing anywhere goes to the prompt.
 | `Esc` | Close pager / search |
 
 - **History**: the last 50 commands, kept in the browser between visits.
-- **Fuzzy search (`Ctrl+R`)**: a small overlay above the prompt; typing filters history by fuzzy match, `Enter` picks, `Esc` cancels.
+- **Fuzzy search (`Ctrl+R`)**: a small fzf-style box above the prompt, starting with what's already typed; typing filters history by fuzzy match (matched letters highlighted), `↑`/`↓` move, `Enter` puts the pick in the prompt to edit or run, `Esc` cancels.
 - Some browser shortcuts can't be overridden (e.g. `Ctrl+W`, `Ctrl+T`); those keep their browser behaviour.
 
 ## 10. Mobile
