@@ -326,7 +326,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 
 ### 0. Repository
 
-- [ ] **0.1** `git init -b main` and a `.gitignore`. The first commit holds the docs.
+- [x] **0.1** `git init -b main` and a `.gitignore`. The first commit holds the docs.
 
 ### 1. Shell layout
 
