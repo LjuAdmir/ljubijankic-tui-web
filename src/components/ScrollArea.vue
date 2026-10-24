@@ -3,7 +3,7 @@ import { computed, onMounted, onUnmounted, reactive, useTemplateRef } from 'vue'
 
 const viewport = useTemplateRef('viewport')
 const content = useTemplateRef('content')
-const size = reactive({ top: 0, height: 0, client: 0, line: 1 })
+const size = reactive({ top: 0, height: 1, client: 1, line: 1 })
 
 function update() {
   const el = viewport.value!

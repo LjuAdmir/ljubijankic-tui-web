@@ -27,12 +27,15 @@ watch(
 
 <template>
   <div class="terminal">
-    <FilePager
-      v-if="store.openFile"
-      ref="pager"
-      :key="store.openFile.path"
-      :file="store.openFile"
-    />
+    <!-- FilePager awaits its page, so prerendering and hydration include the content -->
+    <Suspense>
+      <FilePager
+        v-if="store.openFile"
+        ref="pager"
+        :key="store.openFile.path"
+        :file="store.openFile"
+      />
+    </Suspense>
     <!-- v-show keeps the scroll position while a file is open -->
     <ScrollArea v-show="!store.openFile" ref="scrollback" class="scrollback">
       <OutputLine v-for="entry in store.output" :key="entry.id" :entry="entry" />

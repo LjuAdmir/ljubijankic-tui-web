@@ -1,3 +1,4 @@
+import { copyFileSync } from 'node:fs'
 import { fileURLToPath, URL } from 'node:url'
 
 import { defineConfig } from 'vite'
@@ -20,6 +21,10 @@ export default defineConfig({
     }),
     vueDevTools(),
   ],
+  ssgOptions: {
+    // GitHub Pages serves 404.html for unknown paths, the app then handles them
+    onFinished: () => copyFileSync('dist/index.html', 'dist/404.html'),
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

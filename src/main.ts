@@ -1,14 +1,16 @@
 import './assets/main.css'
 
-import { createApp } from 'vue'
+import { ViteSSG } from 'vite-ssg'
 import { createPinia } from 'pinia'
 
 import App from './App.vue'
-import router from './router'
+import { routes } from './router'
 
-const app = createApp(App)
+export const createApp = ViteSSG(App, { routes }, ({ app, initialState }) => {
+  const pinia = createPinia()
+  app.use(pinia)
 
-app.use(createPinia())
-app.use(router)
-
-app.mount('#app')
+  // the client starts from the prerendered state, so hydration matches the HTML
+  if (import.meta.env.SSR) initialState.pinia = pinia.state.value
+  else pinia.state.value = initialState.pinia ?? {}
+})

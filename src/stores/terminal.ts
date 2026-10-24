@@ -15,10 +15,12 @@ export const useTerminalStore = defineStore('terminal', () => {
   const output = ref<OutputEntry[]>([])
   const mode = ref<'shell' | 'pager' | 'program'>('shell')
   const openFile = ref<FileEntry | null>(null)
-  let nextId = 0
+
+  // derived from the output rather than a counter, so it survives the prerendered state handover
+  const nextId = () => (output.value.at(-1)?.id ?? -1) + 1
 
   function print(...lines: Line[]) {
-    for (const line of lines) output.value.push({ id: nextId++, kind: 'line', line })
+    for (const line of lines) output.value.push({ id: nextId(), kind: 'line', line })
   }
 
   function clear() {
@@ -46,7 +48,7 @@ export const useTerminalStore = defineStore('terminal', () => {
   }
 
   async function run(input: string) {
-    output.value.push({ id: nextId++, kind: 'prompt', cwd: cwd.value, input })
+    output.value.push({ id: nextId(), kind: 'prompt', cwd: cwd.value, input })
 
     const { name, args } = parse(input)
     if (!name) return

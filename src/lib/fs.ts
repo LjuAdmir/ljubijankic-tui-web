@@ -119,6 +119,10 @@ export function list(dir: DirEntry, opts: { all: boolean }): Entry[] {
     .sort(compare)
 }
 
+export function files(dir: DirEntry = root): FileEntry[] {
+  return dir.children.flatMap((entry) => (entry.kind === 'dir' ? files(entry) : [entry]))
+}
+
 export function loadPage(file: FileEntry): Promise<Component | string> {
   return (pages[file.source] ?? texts[file.source])!()
 }

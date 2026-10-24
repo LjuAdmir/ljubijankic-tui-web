@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, shallowRef, useTemplateRef, type Component } from 'vue'
+import { computed, useTemplateRef } from 'vue'
 import { loadPage, type FileEntry } from '@/lib/fs'
 import { useTerminalStore } from '@/stores/terminal'
 import ScrollArea from './ScrollArea.vue'
@@ -8,8 +8,9 @@ const props = defineProps<{ file: FileEntry }>()
 
 const store = useTerminalStore()
 const area = useTemplateRef('area')
-const page = shallowRef<Component | string>()
-loadPage(props.file).then((loaded) => (page.value = loaded))
+defineExpose({ body: computed(() => area.value?.viewport) })
+
+const page = await loadPage(props.file)
 
 const details = computed(() => {
   const { date, tags = [] } = props.file.meta
@@ -17,11 +18,7 @@ const details = computed(() => {
 })
 
 // odd indexes are the links
-const textParts = computed(() =>
-  typeof page.value === 'string' ? page.value.split(/(https?:\/\/\S+)/) : [],
-)
-
-defineExpose({ body: computed(() => area.value?.viewport) })
+const textParts = typeof page === 'string' ? page.split(/(https?:\/\/\S+)/) : []
 </script>
 
 <template>
@@ -37,7 +34,7 @@ defineExpose({ body: computed(() => area.value?.viewport) })
           <template v-else>{{ part }}</template>
         </template>
       </div>
-      <component :is="page" v-else-if="page" />
+      <component :is="page" v-else />
     </ScrollArea>
     <footer>
       <span class="hints">q close · j/k scroll · space page · g/G top/bottom</span>

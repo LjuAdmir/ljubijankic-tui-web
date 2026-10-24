@@ -149,6 +149,7 @@ buildTree(meta, texts): DirEntry                   // pure, so tests can pass th
 resolve(path: string, cwd: string, from = root): Entry | null   // handles ~, $HOME, .., ., absolute/relative
 list(dir: DirEntry, opts: { all: boolean }): Entry[]
 loadPage(file: FileEntry): Promise<Component | string>   // md component or raw text
+files(dir = root): FileEntry[]                     // every file in the tree, for the prerendered routes
 urlFor(file: FileEntry): string                    // ~/articles/hello-world.md → /articles/hello-world
 fromUrl(path: string): Entry | null
 ```
@@ -288,11 +289,12 @@ A small subsequence matcher with a simple score (consecutive and word-start matc
 ```ts
 routes: [
   { path: '/', component: HomeView },
+  ...pages.map((file) => ({ path: urlFor(file), component: HomeView })),
   { path: '/:path(.*)*', component: HomeView },
 ]
 ```
 
-`createWebHistory` (no hash), which vite-ssg needs.
+`pages` is every non-hidden Markdown file from `fs.files()`, dotfiles included. vite-ssg creates the router (web history in the browser, memory history while prerendering), so `router/index.ts` only exports `routes`.
 
 `HomeView` watches the route:
 
@@ -307,8 +309,9 @@ File entries in `ls`/`tree` output and the bottom bar's `about me`/`contact` are
 
 ### Prerendering
 
-- `vite-ssg`'s `includedRoutes` returns `/` plus `urlFor(file)` for every non-hidden Markdown file.
-- Each prerendered page renders the terminal with that file already open in the pager, so crawlers see the real content.
+- vite-ssg prerenders every static route: `/` plus one per file in `pages`. `includedRoutes` can't be used for this, because it runs in `vite.config.ts` where `import.meta.glob` isn't available.
+- Each prerendered page renders the terminal with that file already open in the pager, so crawlers see the real content. `HomeView` returns the watcher's `execute` promise from `onServerPrefetch`, and `FilePager` awaits its page inside `<Suspense>`, so both finish before the HTML is written.
+- The Pinia state is serialised into the page (`initialState.pinia`), so the client hydrates from exactly what was rendered. Output ids are derived from the last entry instead of a counter for the same reason.
 - `FilePager.vue` calls `useHead` with the file's `title`, `description` and `og:image`.
 - Output style: flat (`articles/hello-world.html`). GitHub Pages serves it at `/articles/hello-world` without a trailing-slash redirect.
 
@@ -382,7 +385,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 ### 4. URLs
 
 - [ ] **4.1** Routes and the `HomeView` watcher (file, directory, unknown). Opening a file pushes its URL and closing the pager goes back (or pushes `/`). Files in `ls` and the bar's `about me`/`contact` become real `href` links.
-- [ ] **4.2** Switch to vite-ssg: `main.ts` uses `ViteSSG`, `includedRoutes`, flat output, and the build copies `index.html` → `404.html`.
+- [ ] **4.2** Switch to vite-ssg: `main.ts` uses `ViteSSG`, a route per Markdown file, Pinia state handover, flat output, and the build copies `index.html` → `404.html`.
 - [ ] **4.3** `useHead` in `FilePager` (title, description, `og:image`).
 - [ ] **4.4** The `share` command, the `s` key and the `[share]` button.
 - [ ] **4.5** `public/CNAME` and the GitHub Actions Pages workflow.
