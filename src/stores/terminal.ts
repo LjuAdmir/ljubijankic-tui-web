@@ -3,11 +3,12 @@ import { defineStore } from 'pinia'
 import { parse } from '@/lib/parse'
 import { findCommand } from '@/commands'
 import type { FileEntry } from '@/lib/fs'
-import type { CommandContext, Line } from '@/commands/types'
+import type { CommandContext, Line, OutputComponent } from '@/commands/types'
 
 export type OutputEntry =
   | { id: number; kind: 'prompt'; cwd: string; input: string }
   | { id: number; kind: 'line'; line: Line }
+  | { id: number; kind: 'component'; name: OutputComponent }
 
 export const useTerminalStore = defineStore('terminal', () => {
   const cwd = ref('~')
@@ -21,6 +22,10 @@ export const useTerminalStore = defineStore('terminal', () => {
 
   function print(...lines: Line[]) {
     for (const line of lines) output.value.push({ id: nextId(), kind: 'line', line })
+  }
+
+  function printComponent(name: OutputComponent) {
+    output.value.push({ id: nextId(), kind: 'component', name })
   }
 
   function clear() {
@@ -59,7 +64,7 @@ export const useTerminalStore = defineStore('terminal', () => {
       return
     }
 
-    const ctx: CommandContext = { cwd: cwd.value, cd, print, open, clear }
+    const ctx: CommandContext = { cwd: cwd.value, cd, print, printComponent, open, clear }
     await command.run(args, ctx)
   }
 

@@ -9,7 +9,9 @@ const route = useRoute()
 const router = useRouter()
 const store = useTerminalStore()
 
-function show(path: string) {
+async function show(path: string) {
+  // a fresh visit starts on the home screen, a prerendered one already has it in its state
+  if (!store.output.length) await store.execute('lifefetch')
   if (path === '/') return store.closeFile()
 
   const entry = fromUrl(path)
@@ -26,7 +28,7 @@ function show(path: string) {
   router.replace('/')
 }
 
-let shown: Promise<void> | void
+let shown: Promise<void>
 watch(
   () => route.path,
   (path) => (shown = show(path)),

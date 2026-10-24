@@ -3,7 +3,7 @@ import { withBase } from '@/lib/site'
 import { useTerminalStore } from '@/stores/terminal'
 
 const links = [
-  { label: 'home', command: ['cd ~', 'ls'] },
+  { label: 'home', command: 'cd ~' },
   { label: 'about me', command: 'open ~/about.md', href: withBase('/about') },
   { label: 'projects', command: ['cd ~/projects', 'ls'] },
   { label: 'articles', command: ['cd ~/articles', 'ls'] },

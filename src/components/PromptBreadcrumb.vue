@@ -13,7 +13,7 @@ const crumbs = computed(() => {
 <template>
   <template v-for="(crumb, index) in crumbs" :key="crumb.path">
     <template v-if="index > 0">/</template>
-    <button type="button" @click="store.execute([`cd ${crumb.path}`, 'ls'])">
+    <button type="button" @click="store.execute(index ? [`cd ${crumb.path}`, 'ls'] : 'cd ~')">
       {{ crumb.name }}
     </button>
   </template>

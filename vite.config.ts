@@ -20,6 +20,17 @@ export default defineConfig({
         head: defaults(frontmatter, options),
         frontmatter: { ...frontmatter, frontmatter },
       }),
+      // external links open in a new tab
+      markdownSetup(md) {
+        md.core.ruler.push('external_links', (state) => {
+          for (const token of state.tokens.flatMap((block) => block.children ?? [])) {
+            if (token.type === 'link_open' && /^https?:\/\//.test(token.attrGet('href') ?? '')) {
+              token.attrSet('target', '_blank')
+              token.attrSet('rel', 'noopener')
+            }
+          }
+        })
+      },
     }),
     vueDevTools(),
   ],

@@ -68,7 +68,7 @@ The first thing a visitor sees, modelled on fastfetch/neofetch: ASCII art on the
   Tip: type 'help' to see available commands.
 ```
 
-- Shown on first visit.
+- Shown on first visit, also behind the pager when someone lands directly on a file URL.
 - Going home: `lifefetch`, `cd` with no argument, `cd ~` and `cd $HOME` all do the same thing. They clear the screen, move to the home directory, and show the lifefetch output.
 - **Uptime** is age in years, calculated from the birth date (3 March 1997) on every visit. On 3 March a cake icon is shown next to it (`29 years 🎂`).
 - **Agiledrop** links to [agiledrop.com](https://agiledrop.com).
@@ -201,8 +201,9 @@ Opening a file switches the output area into a full-screen reader, like `less`:
 | Directory name in any output | `cd <dir>` then `ls` |
 | File name in any output | `open <file>` |
 | Command name in `help` | `help <command>` |
-| Breadcrumb segment in the prompt | `cd <that path>` |
-| Bottom bar `[home]` | `lifefetch` |
+| Breadcrumb segment in the prompt | `cd <that path>` (`~` shows lifefetch) |
+| `help` in the lifefetch tip | `help` |
+| Bottom bar `[home]` | `cd ~` (shows lifefetch) |
 | Bottom bar `[about me]` | `open ~/about.md` |
 | Bottom bar `[projects]` | `cd ~/projects` then `ls` |
 | Bottom bar `[articles]` | `cd ~/articles` then `ls` |

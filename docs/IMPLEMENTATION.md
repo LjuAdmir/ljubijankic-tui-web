@@ -141,6 +141,7 @@ const texts = import.meta.glob(
 - Directory entries are derived from file paths, with metadata from their `index.md`.
 - Vite's globs skip dot paths by default. `{*,.*}` adds dotfiles, and the `/content/.*/**` patterns add top-level dot directories like `.ssh/`. Negations need the same forms. Dot directories nested deeper (`projects/.drafts/`) are not picked up.
 - `unplugin-vue-markdown` exports each frontmatter field separately. A `frontmatterPreprocess` hook in `vite.config.ts` also exports them as one `frontmatter` object.
+- External links (`http(s)://`) open in a new tab everywhere: a small `markdownSetup` rule in `vite.config.ts` adds `target="_blank" rel="noopener"` to Markdown links, and hand-written links (lifefetch, plain text files) set it themselves. Internal links stay in the same tab.
 - YAML turns `date` into a `Date`, which arrives as an ISO string.
 
 ### `lib/fs.ts` API
@@ -185,7 +186,7 @@ interface CommandContext {
   cwd: string
   cd(path: string): void
   print(...lines: Line[]): void
-  printComponent(component: Component, props?: object): void   // lifefetch, cowsay, …
+  printComponent(name: OutputComponent): void                  // lifefetch, cowsay, …
   open(file: FileEntry): void                                  // pager
   run(component: Component): void                              // full-screen programs: matrix, sl
   clear(): void
@@ -217,7 +218,10 @@ Aliases: `cat`/`open`/`less` are one command; `neofetch` is an alias of `lifefet
 
 - Static values (name, location, hardware, …) are a plain object in `LifeFetch.vue`. Agiledrop is a link to `https://agiledrop.com`.
 - Uptime = full years since `1997-03-03`, with 🎂 appended on 3 March. It's computed in `onMounted`, so the prerendered HTML (built on a different day) doesn't cause a hydration mismatch.
-- `lifefetch`, `cd`, `cd ~` and `cd $HOME` all share one `goHome(ctx)`: `clear()`, set `cwd` to `~`, then `printComponent(LifeFetch)`. Typed commands stay in history even though the screen is cleared.
+- `lifefetch`, `cd`, `cd ~` and `cd $HOME` all share one `goHome(ctx)` in `commands/lifefetch.ts`: `clear()`, set `cwd` to `~`, then `printComponent('lifefetch')`. Typed commands stay in history even though the screen is cleared. Paths that merely resolve to home (`cd ..`, `cd ~/`) are a plain `cd`.
+- Components go into the output by name (`OutputComponent`), and `OutputLine` maps the name to the component. That keeps the scrollback serialisable for the prerendered state handover.
+- First visit: `HomeView` runs `lifefetch` before anything else when the scrollback is empty, so a deep link shows lifefetch, then the `cd`/`open` lines behind the pager. Prerendered pages already contain it in their state.
+- Logo: big framed "AL" block letters, A in mauve, L in blue, frame muted; keys in mauve; colour row red, peach, yellow, green, teal, blue, mauve, pink. Below 48rem the logo stacks above the info. The `help` in the tip is clickable.
 
 ## 5. State and input
 
@@ -395,7 +399,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **4.2** Switch to vite-ssg: `main.ts` uses `ViteSSG`, a route per Markdown file, Pinia state handover, flat output, and the build copies `index.html` → `404.html`.
 - [x] **4.3** Meta tags: home defaults in `App.vue`, per-file title, description, `og:*`, `twitter:card` and canonical in `FilePager`.
 - [x] **4.4** The `share` command, the `s` key and the `[share]` button.
-- [ ] **4.5** The GitHub Actions Pages workflow (manual trigger for now) and base path support for the github.io preview.
+- [x] **4.5** The GitHub Actions Pages workflow (manual trigger for now) and base path support for the github.io preview.
   Domain: `ljubijankic.si`, which currently points at the old site. Switch it over once this site is ready.
 
 ### 5. Terminal comfort

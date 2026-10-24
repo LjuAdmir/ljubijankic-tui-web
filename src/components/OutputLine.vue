@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import type { Component } from 'vue'
 import { useTerminalStore, type OutputEntry } from '@/stores/terminal'
+import type { OutputComponent } from '@/commands/types'
 import PromptLabel from './PromptLabel.vue'
+import LifeFetch from './LifeFetch.vue'
 
 defineProps<{ entry: OutputEntry }>()
+
+const components: Record<OutputComponent, Component> = { lifefetch: LifeFetch }
 
 const store = useTerminalStore()
 </script>
@@ -12,6 +17,7 @@ const store = useTerminalStore()
     <template v-if="entry.kind === 'prompt'">
       <PromptLabel :cwd="entry.cwd" />{{ entry.input }}
     </template>
+    <component :is="components[entry.name]" v-else-if="entry.kind === 'component'" />
     <template v-else>
       <template v-for="(segment, index) in entry.line" :key="index">
         <a
