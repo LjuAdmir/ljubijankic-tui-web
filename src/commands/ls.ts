@@ -15,6 +15,7 @@ function format(entry: Entry, label: string, width: number): Line {
 
 export default {
   name: 'ls',
+  aliases: ['ll'],
   summary: 'List files',
   usage: 'ls [-a] [path]',
   run(args, ctx) {
