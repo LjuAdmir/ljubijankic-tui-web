@@ -1,6 +1,9 @@
 import type { Command } from './types'
+import clear from './clear'
+import echo from './echo'
+import help from './help'
 
-const commands: Command[] = []
+const commands: Command[] = [clear, echo, help]
 
 export function allCommands(): Command[] {
   return commands

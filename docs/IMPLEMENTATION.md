@@ -334,7 +334,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **1.2** Install `@webtui/css` and `@webtui/theme-catppuccin`, set up `main.css` with the layer order, and put `data-webtui-theme="catppuccin-mocha"` on `<html>`.
 - [x] **1.3** `lib/parse.ts` with tests.
 - [x] **1.4** Terminal store skeleton (`cwd`, `output`, `mode`, `execute`), the command registry, and "command not found".
-- [ ] **1.5** `TerminalView`, `OutputLine`, `PromptLine` and a static `BottomBar`: scrollback on top, prompt pinned at the bottom, Enter runs the input. On desktop, typing focuses the prompt; touch devices don't auto-focus.
+- [x] **1.5** `TerminalView`, `OutputLine`, `PromptLine` and a static `BottomBar`: scrollback on top, prompt pinned at the bottom, Enter runs the input. On desktop, typing focuses the prompt; touch devices don't auto-focus.
 - [ ] **1.6** `echo`, `clear`, `help` (with clickable command names).
 
 ### 2. Filesystem
