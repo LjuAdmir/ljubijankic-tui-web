@@ -36,6 +36,11 @@ export const useTerminalStore = defineStore('terminal', () => {
     mode.value = 'pager'
   }
 
+  function closeFile() {
+    openFile.value = null
+    mode.value = 'shell'
+  }
+
   async function execute(input: string | string[]) {
     for (const line of [input].flat()) await run(line)
   }
@@ -56,5 +61,5 @@ export const useTerminalStore = defineStore('terminal', () => {
     await command.run(args, ctx)
   }
 
-  return { cwd, previousCwd, output, mode, openFile, execute }
+  return { cwd, previousCwd, output, mode, openFile, execute, closeFile }
 })

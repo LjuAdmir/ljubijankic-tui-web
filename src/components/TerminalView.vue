@@ -5,6 +5,7 @@ import { useKeyboard } from '@/composables/useKeyboard'
 import OutputLine from './OutputLine.vue'
 import PromptLine from './PromptLine.vue'
 import BottomBar from './BottomBar.vue'
+import FilePager from './FilePager.vue'
 
 const store = useTerminalStore()
 const scrollback = useTemplateRef('scrollback')
@@ -21,10 +22,12 @@ watch(
 
 <template>
   <div class="terminal">
-    <div ref="scrollback" class="scrollback">
+    <FilePager v-if="store.openFile" :key="store.openFile.path" :file="store.openFile" />
+    <!-- v-show keeps the scroll position while a file is open -->
+    <div v-show="!store.openFile" ref="scrollback" class="scrollback">
       <OutputLine v-for="entry in store.output" :key="entry.id" :entry="entry" />
     </div>
-    <PromptLine ref="prompt" />
+    <PromptLine v-show="!store.openFile" ref="prompt" />
     <BottomBar />
   </div>
 </template>

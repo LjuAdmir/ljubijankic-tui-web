@@ -3,5 +3,7 @@
 @import '@webtui/css/base.css';
 @import '@webtui/css/utils/box.css';
 @import '@webtui/css/components/button.css';
+@import '@webtui/css/components/pre.css';
+@import '@webtui/css/components/typography.css';
 
 @import '@webtui/theme-catppuccin';

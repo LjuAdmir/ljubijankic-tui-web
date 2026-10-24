@@ -224,7 +224,7 @@ cwd: string
 previousCwd: string
 output: OutputEntry[]                       // scrollback
 mode: 'shell' | 'pager' | 'program'
-openFile: FileEntry | null
+openFile: FileEntry | null                  // set by open(file), cleared by closeFile()
 program: Component | null
 execute(input: string): Promise<void>       // parse → echo prompt+input → find → run
 ```
@@ -369,7 +369,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 
 ### 3. Pager
 
-- [ ] **3.1** `fs.loadPage`, plus `openFile` and the `pager` mode in the store; `cat`/`open`/`less` with the "is a directory" error.
+- [x] **3.1** `fs.loadPage`, plus `openFile` and the `pager` mode in the store; `cat`/`open`/`less` with the "is a directory" error.
 - [ ] **3.2** `FilePager`: header (path, date, tags), rendered Markdown with images, plain text with clickable links, and a `[close]` button.
 - [ ] **3.3** Pager keys in `useKeyboard` (`q`/`Esc`, `j`/`k`, `g`/`G`, `Space`, `PgUp`/`PgDn`) on a native scroll container.
 - [ ] **3.4** Files in `ls` output are clickable. The bottom bar is wired up (`home` runs a plain `cd ~` until 5.1).
