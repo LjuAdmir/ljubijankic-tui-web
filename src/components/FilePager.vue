@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, useTemplateRef } from 'vue'
-import { loadPage, type FileEntry } from '@/lib/fs'
+import { useHead, useSeoMeta } from '@unhead/vue'
+import { loadPage, urlFor, type FileEntry } from '@/lib/fs'
+import { siteName, siteUrl } from '@/lib/site'
 import { useTerminalStore } from '@/stores/terminal'
 import ScrollArea from './ScrollArea.vue'
 
@@ -9,6 +11,21 @@ const props = defineProps<{ file: FileEntry }>()
 const store = useTerminalStore()
 const area = useTemplateRef('area')
 defineExpose({ body: computed(() => area.value?.viewport) })
+
+const { title = props.file.name, description, image } = props.file.meta
+const fullTitle = `${title} · ${siteName}`
+const url = siteUrl + urlFor(props.file)
+useSeoMeta({
+  title: fullTitle,
+  description,
+  ogTitle: fullTitle,
+  ogDescription: description,
+  ogType: 'article',
+  ogUrl: url,
+  ogImage: image && siteUrl + image,
+  twitterCard: image ? 'summary_large_image' : 'summary',
+})
+useHead({ link: [{ rel: 'canonical', href: url }] })
 
 const page = await loadPage(props.file)
 

@@ -67,6 +67,7 @@ src/
     complete.ts           # tab completion
     fuzzy.ts              # Ctrl+R matching
     storage.ts            # safe localStorage get/set
+    site.ts               # site name and URL, for meta tags
   App.vue
   main.ts
 ```
@@ -312,7 +313,7 @@ File entries in `ls`/`tree` output and the bottom bar's `about me`/`contact` are
 - vite-ssg prerenders every static route: `/` plus one per file in `pages`. `includedRoutes` can't be used for this, because it runs in `vite.config.ts` where `import.meta.glob` isn't available.
 - Each prerendered page renders the terminal with that file already open in the pager, so crawlers see the real content. `HomeView` returns the watcher's `execute` promise from `onServerPrefetch`, and `FilePager` awaits its page inside `<Suspense>`, so both finish before the HTML is written.
 - The Pinia state is serialised into the page (`initialState.pinia`), so the client hydrates from exactly what was rendered. Output ids are derived from the last entry instead of a counter for the same reason.
-- `FilePager.vue` calls `useHead` with the file's `title`, `description` and `og:image`.
+- Meta tags use `@unhead/vue` (`useSeoMeta` + a canonical `link`). `App.vue` sets the home defaults: title = site name, a placeholder description, `og:*`, `twitter:card` and canonical `https://ljubijankic.si/`. `FilePager.vue` overrides them while a file is open: title `<title> · Admir Ljubijankić` (also `og:title`), `description`, `og:type` article, `og:url` and canonical from `urlFor`, `og:image` from `image` (with `twitter:card` `summary_large_image`). Closing the pager drops the overrides. Absolute URLs come from `siteUrl` in `lib/site.ts`.
 - Output style: flat (`articles/hello-world.html`). GitHub Pages serves it at `/articles/hello-world` without a trailing-slash redirect.
 
 ### 404 and directory URLs
@@ -384,12 +385,12 @@ Each milestone ends with something runnable. Each milestone is split into small 
 
 ### 4. URLs
 
-- [ ] **4.1** Routes and the `HomeView` watcher (file, directory, unknown). Opening a file pushes its URL and closing the pager goes back (or pushes `/`). Files in `ls` and the bar's `about me`/`contact` become real `href` links.
-- [ ] **4.2** Switch to vite-ssg: `main.ts` uses `ViteSSG`, a route per Markdown file, Pinia state handover, flat output, and the build copies `index.html` → `404.html`.
-- [ ] **4.3** `useHead` in `FilePager` (title, description, `og:image`).
+- [x] **4.1** Routes and the `HomeView` watcher (file, directory, unknown). Opening a file pushes its URL and closing the pager goes back (or pushes `/`). Files in `ls` and the bar's `about me`/`contact` become real `href` links.
+- [x] **4.2** Switch to vite-ssg: `main.ts` uses `ViteSSG`, a route per Markdown file, Pinia state handover, flat output, and the build copies `index.html` → `404.html`.
+- [ ] **4.3** Meta tags: home defaults in `App.vue`, per-file title, description, `og:*`, `twitter:card` and canonical in `FilePager`.
 - [ ] **4.4** The `share` command, the `s` key and the `[share]` button.
 - [ ] **4.5** `public/CNAME` and the GitHub Actions Pages workflow.
-  > **Decision needed:** the custom domain.
+  Domain: `ljubijankic.si`, which currently points at the old site. Switch it over once this site is ready.
 
 ### 5. Terminal comfort
 

@@ -213,7 +213,7 @@ Clicking always echoes the command into the scrollback as if it had been typed.
 
 ## 8. URLs and sharing
 
-- Only **files** get shareable URLs: `~/articles/hello-world.md` → `https://<domain>/articles/hello-world`.
+- Only **files** get shareable URLs: `~/articles/hello-world.md` → `https://ljubijankic.si/articles/hello-world`.
 - `cd` does not change the URL.
 - Opening a file updates the URL; closing the pager resets it to `/`. Browser back/forward follow this.
 - Visiting a file URL directly boots the terminal, sets the current directory to the file's directory (`~/articles`), and opens the file in the pager.
