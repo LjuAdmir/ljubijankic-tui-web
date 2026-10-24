@@ -357,7 +357,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 ### 2. Filesystem
 
 - [x] **2.1** `unplugin-vue-markdown` setup plus sample content (`about.md`, `contact.md`, `projects/` and `articles/` with `index.md` and one file each). Check that the globs pick up dot paths.
-- [ ] **2.2** `lib/fs.ts`: tree building, `resolve`, `list`, `name` override, plain text files, with tests.
+- [x] **2.2** `lib/fs.ts`: tree building, `resolve`, `list`, `name` override, plain text files, with tests.
 - [ ] **2.3** `cd` (including `cd -` via `previousCwd`) and `pwd`. The prompt shows the cwd.
 - [ ] **2.4** `ls` and `ls -a`, always detailed, with clickable directories.
 - [ ] **2.5** `tree`.

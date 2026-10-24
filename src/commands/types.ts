@@ -7,6 +7,7 @@ export type Line = Segment[]
 
 export interface CommandContext {
   cwd: string
+  cd(path: string): void
   print(...lines: Line[]): void
   clear(): void
 }

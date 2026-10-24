@@ -10,6 +10,7 @@ export type OutputEntry =
 
 export const useTerminalStore = defineStore('terminal', () => {
   const cwd = ref('~')
+  const previousCwd = ref('~')
   const output = ref<OutputEntry[]>([])
   const mode = ref<'shell' | 'pager' | 'program'>('shell')
   let nextId = 0
@@ -20,6 +21,12 @@ export const useTerminalStore = defineStore('terminal', () => {
 
   function clear() {
     output.value = []
+  }
+
+  function cd(path: string) {
+    const target = path === '-' ? previousCwd.value : path
+    previousCwd.value = cwd.value
+    cwd.value = target
   }
 
   async function execute(input: string) {
@@ -34,9 +41,9 @@ export const useTerminalStore = defineStore('terminal', () => {
       return
     }
 
-    const ctx: CommandContext = { cwd: cwd.value, print, clear }
+    const ctx: CommandContext = { cwd: cwd.value, cd, print, clear }
     await command.run(args, ctx)
   }
 
-  return { cwd, output, mode, execute }
+  return { cwd, previousCwd, output, mode, execute }
 })
