@@ -36,6 +36,14 @@ const store = useTerminalStore()
         >
           {{ segment.text }}
         </button>
+        <button
+          v-else-if="'fill' in segment"
+          type="button"
+          :class="['command', segment.style]"
+          @click="store.input = segment.fill"
+        >
+          {{ segment.text }}
+        </button>
         <a v-else-if="'href' in segment" :href="segment.href">{{ segment.text }}</a>
         <span v-else :class="segment.style">{{ segment.text }}</span>
       </template>

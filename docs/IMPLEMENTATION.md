@@ -174,7 +174,7 @@ interface Command {
   summary: string
   usage?: string
   hidden?: boolean
-  complete?: (args: string[], ctx: CommandContext) => string[]
+  complete?: (word: string, cwd: string) => string[]   // Tab candidates, paths by default
   run: (args: string[], ctx: CommandContext) => void | Promise<void>
 }
 ```
@@ -203,6 +203,7 @@ type Segment =
   | { text: string; style?: Style }
   | { text: string; command: string | string[]; style?: Style }   // clickable, runs the command(s) in order
   | { text: string; href: string }      // real link (files)
+  | { text: string; fill: string; style?: Style }    // clickable, puts the text in the prompt (Tab candidates)
 type Line = Segment[]
 ```
 
@@ -234,7 +235,9 @@ output: OutputEntry[]                       // scrollback
 mode: 'shell' | 'pager' | 'program'
 openFile: FileEntry | null                  // set by open(file), cleared by closeFile()
 program: Component | null
+input: string                               // the prompt's text, so output lines can fill it
 execute(input: string): Promise<void>       // parse → echo prompt+input → find → run
+echo(input: string): void                   // a prompt line without running anything
 ```
 
 Clicking anything calls `execute(command)`. That way typed and clicked commands go through the same path and both show up in the scrollback.
@@ -243,7 +246,7 @@ Clicking anything calls `execute(command)`. That way typed and clicked commands 
 
 One `keydown` listener on `window`, switching on `store.mode`:
 
-- `shell`: printable keys focus the prompt input (desktop only); handles `Tab`, `Ctrl+R/L/C/U/A/E`. `↑`/`↓` are handled on the input itself in `PromptLine` (`@keydown.up/down`), since they only matter while typing.
+- `shell`: printable keys focus the prompt input (desktop only); handles `Ctrl+R/L/C/U/A/E`. `↑`/`↓` and `Tab` are handled on the input itself in `PromptLine` (`@keydown.up/down/tab`), since they only matter while typing.
 - `pager`: `q`/`Esc` close, `j`/`k`/`↑`/`↓` one line, `Space`/`PgDn`/`PgUp` one page (minus a line), `g`/`G`/`Home`/`End` top and bottom, `s` share. Scrolling is instant. Keys are ignored with Ctrl/Alt/Meta held, and `Space`/`Enter` on a focused button or link keep their normal behaviour. `FilePager` exposes its scroll container and `TerminalView` passes it to `useKeyboard`. The key hints on the pager's bottom border are hidden on touch devices. The pager body is a normal scroll container (`overflow-y: auto`) and the keys just call `scrollBy`/`scrollTo` on it. Mouse wheel, trackpad and touch therefore work natively; nothing intercepts `wheel` or touch events.
 
 **Scrollbars.** `ScrollArea.vue` wraps the pager body and the scrollback. It hides the native scrollbar and draws a text one instead: a `│` track and a `█` thumb one column wide, sized to the visible part in whole lines, and shown only when the content overflows. The thumb can be dragged, and clicking the track jumps there. Sizes come from the `scroll` event and a `ResizeObserver` on the viewport and its content (images loading, new output). In the pager the track sits on the box's right border, and the bottom border shows the scroll percentage.
@@ -266,9 +269,11 @@ If interactive input is ever needed, it's another `mode`.
 
 ### Completion (`lib/complete.ts`)
 
-- First word: complete against command names and aliases (excluding hidden).
-- Later words: the command's own `complete()` if it has one, otherwise path completion against `fs.ts` (directories get a trailing `/`).
-- One match: fill it in. Several: fill the common prefix and print the candidates.
+- `lib/complete.ts` has the pure parts: `matching` (options starting with the word), `paths` (directories get a trailing `/`, dotfiles only once the name starts with `.`, drafts never) and `commonPrefix`. `completeInput` in `commands/index.ts` decides what to complete.
+- First word: command names and aliases (excluding hidden).
+- Later words: the command's own `complete()` if it has one, otherwise paths. `cd` and `tree` complete directories only, `help` completes command names.
+- `Tab` is handled on the prompt input in `PromptLine`. An empty prompt leaves `Tab` alone, so keyboard users can still move focus through the page.
+- One match: fill it in, with a trailing space for files and commands. Several (zsh style): the first `Tab` fills the common prefix, echoes the prompt line and prints the candidates in one row (last path part only, directories coloured); further `Tab`s cycle through them in the prompt. Typing anything starts over. Clicking a candidate fills the prompt with it.
 
 ### Fuzzy (`lib/fuzzy.ts`)
 
@@ -345,7 +350,8 @@ Vitest, on `src/lib/`, `useHistory` and the command registry:
 - `share.ts`: clipboard on desktop, share sheet on touch, cancelled sheet, blocked clipboard.
 - `fs.ts`: `resolve` with `~`, `$HOME`, `..` past root, `.`, trailing slashes, relative vs absolute, hidden entries, files vs dirs, `index.md` not listed, plain text files present, `name` override resolves by display name; `urlFor` / `fromUrl` round trip.
 - `parse.ts`: whitespace, quoted args, flags.
-- `complete.ts`: single match, common prefix, no match, directories get `/`.
+- `complete.ts`: matching, paths (nested, `~/`, `..`, dotfiles only after `.`, drafts, directories only), common prefix.
+- `commands/index.ts`: `completeInput` for command names, paths, and commands' own completion.
 - `fuzzy.ts`: edit distance (including swaps), `closest` thresholds and ties; `match` positions, empty query, runs and word starts ranking.
 - `commands/index.ts`: `suggestCommand` prefers names over aliases, skips unrelated input.
 - `storage.ts`: JSON round trip, missing key, invalid JSON, blocked storage.
@@ -416,7 +422,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
   - Every click that leads home (breadcrumb `~`, `ls`/`tree` entries pointing at `~`, bottom bar `home`) runs just `cd ~`, which clears the screen and shows lifefetch. Until then they run `cd ~` then `ls`.
 - [x] **5.2** `lib/storage.ts` and `useHistory` (cap 50, no consecutive duplicates) with tests; `↑`/`↓` and the `history` command.
 - [x] **5.3** `lib/fuzzy.ts` with tests; "did you mean" for unknown commands.
-- [ ] **5.4** `HistorySearch` (`Ctrl+R`).
+- [x] **5.4** `HistorySearch` (`Ctrl+R`).
 - [ ] **5.5** `lib/complete.ts` with tests, wired to `Tab`.
 - [ ] **5.6** Shortcuts: `Ctrl+L`, `Ctrl+C`, `Ctrl+U`, `Ctrl+A`, `Ctrl+E`.
 - [ ] **5.7** `useTheme`, the `theme` command, and the inline no-flash script in `index.html`.

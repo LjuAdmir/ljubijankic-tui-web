@@ -230,7 +230,7 @@ On desktop the page captures the keyboard: typing anywhere goes to the prompt.
 | Key | Action |
 |---|---|
 | `Enter` | Run command |
-| `Tab` | Complete command or path; on ambiguity, list candidates |
+| `Tab` | Complete command or path; on ambiguity, list candidates (clickable), further `Tab`s cycle through them |
 | `↑` / `↓` | Walk through history; with text typed, only commands starting with it |
 | `Ctrl+R` | Fuzzy search through history |
 | `Ctrl+L` | Clear the screen |

@@ -1,5 +1,6 @@
 import { list, resolve, type DirEntry, type Entry } from '@/lib/fs'
 import { hasFlag } from '@/lib/parse'
+import { paths } from '@/lib/complete'
 import { entrySegment } from './segments'
 import type { Command, Line } from './types'
 
@@ -28,6 +29,7 @@ export default {
   name: 'tree',
   summary: 'Show a directory as a tree',
   usage: 'tree [-a] [path]',
+  complete: (word, cwd) => paths(word, cwd, { dirs: true }),
   run(args, ctx) {
     const path = args.find((arg) => !arg.startsWith('-')) ?? '.'
     const target = resolve(path, ctx.cwd)

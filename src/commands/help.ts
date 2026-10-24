@@ -1,10 +1,12 @@
-import { allCommands, findCommand } from '.'
+import { allCommands, commandNames, findCommand } from '.'
+import { matching } from '@/lib/complete'
 import type { Command, Line } from './types'
 
 export default {
   name: 'help',
   summary: 'List commands, or show how to use one',
   usage: 'help [command]',
+  complete: (word) => matching(word, commandNames()),
   run(args, ctx) {
     const [name] = args
 

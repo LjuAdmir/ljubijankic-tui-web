@@ -1,4 +1,5 @@
 import { resolve } from '@/lib/fs'
+import { paths } from '@/lib/complete'
 import { goHome } from './lifefetch'
 import type { Command } from './types'
 
@@ -6,6 +7,7 @@ export default {
   name: 'cd',
   summary: 'Change directory',
   usage: 'cd [path]',
+  complete: (word, cwd) => paths(word, cwd, { dirs: true }),
   run([path = '~'], ctx) {
     if (path === '~' || path === '$HOME') return goHome(ctx)
     if (path === '-') return ctx.cd('-')

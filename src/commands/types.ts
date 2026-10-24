@@ -6,6 +6,7 @@ export type Segment =
   | { text: string; style?: Style }
   | { text: string; command: string | string[]; href?: string; style?: Style }
   | { text: string; href: string }
+  | { text: string; fill: string; style?: Style } // clickable, puts the text in the prompt
 
 export type Line = Segment[]
 
@@ -27,5 +28,7 @@ export interface Command {
   summary: string
   usage?: string
   hidden?: boolean
+  // candidates for the word being typed, paths by default
+  complete?: (word: string, cwd: string) => string[]
   run: (args: string[], ctx: CommandContext) => void | Promise<void>
 }

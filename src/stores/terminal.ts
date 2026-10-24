@@ -16,6 +16,8 @@ export const useTerminalStore = defineStore('terminal', () => {
   const output = ref<OutputEntry[]>([])
   const mode = ref<'shell' | 'pager' | 'program'>('shell')
   const openFile = ref<FileEntry | null>(null)
+  // the prompt's text, here so output lines (completion candidates) can fill it
+  const input = ref('')
 
   // derived from the output rather than a counter, so it survives the prerendered state handover
   const nextId = () => (output.value.at(-1)?.id ?? -1) + 1
@@ -52,8 +54,12 @@ export const useTerminalStore = defineStore('terminal', () => {
     for (const line of [input].flat()) await run(line)
   }
 
-  async function run(input: string) {
+  function echo(input: string) {
     output.value.push({ id: nextId(), kind: 'prompt', cwd: cwd.value, input })
+  }
+
+  async function run(input: string) {
+    echo(input)
 
     const { name, args } = parse(input)
     if (!name) return
@@ -76,5 +82,17 @@ export const useTerminalStore = defineStore('terminal', () => {
     await command.run(args, ctx)
   }
 
-  return { cwd, previousCwd, output, mode, openFile, execute, print, clear, closeFile }
+  return {
+    cwd,
+    previousCwd,
+    output,
+    mode,
+    openFile,
+    input,
+    execute,
+    echo,
+    print,
+    clear,
+    closeFile,
+  }
 })
