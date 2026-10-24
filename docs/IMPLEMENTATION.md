@@ -374,8 +374,8 @@ Each milestone ends with something runnable. Each milestone is split into small 
 
 - [x] **3.1** `fs.loadPage`, plus `openFile` and the `pager` mode in the store; `cat`/`open`/`less` with the "is a directory" error.
 - [x] **3.2** `FilePager`: header (path, date, tags), rendered Markdown with images, plain text with clickable links, and a `[close]` button.
-- [ ] **3.3** Pager keys in `useKeyboard` (`q`/`Esc`, `j`/`k`, `g`/`G`, `Space`, `PgUp`/`PgDn`) on a native scroll container.
-- [ ] **3.4** Files in `ls` output are clickable. The bottom bar is wired up (`home` runs a plain `cd ~` until 5.1).
+- [x] **3.3** Pager keys in `useKeyboard` (`q`/`Esc`, `j`/`k`, `g`/`G`, `Space`, `PgUp`/`PgDn`) on a native scroll container.
+- [ ] **3.4** Files in `ls` output are clickable. The bottom bar is wired up (`home` runs `cd ~` then `ls` until 5.1). Bottom bar clicks close the pager and silently clear the screen first, so visitors only see the result of what they clicked.
 
 ### 4. URLs
 

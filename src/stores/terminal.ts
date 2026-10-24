@@ -61,5 +61,5 @@ export const useTerminalStore = defineStore('terminal', () => {
     await command.run(args, ctx)
   }
 
-  return { cwd, previousCwd, output, mode, openFile, execute, closeFile }
+  return { cwd, previousCwd, output, mode, openFile, execute, clear, closeFile }
 })
