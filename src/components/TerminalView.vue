@@ -15,7 +15,7 @@ const pager = useTemplateRef('pager')
 
 useKeyboard(
   () => prompt.value?.focus(),
-  () => pager.value?.body,
+  () => pager.value,
 )
 
 watch(

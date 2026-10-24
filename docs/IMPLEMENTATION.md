@@ -239,7 +239,7 @@ Clicking anything calls `execute(command)`. That way typed and clicked commands 
 One `keydown` listener on `window`, switching on `store.mode`:
 
 - `shell`: printable keys focus the prompt input (desktop only); handles `Tab`, `↑`/`↓`, `Ctrl+R/L/C/U/A/E`.
-- `pager`: `q`/`Esc` close, `j`/`k`/`↑`/`↓` one line, `Space`/`PgDn`/`PgUp` one page (minus a line), `g`/`G`/`Home`/`End` top and bottom, and later `s` (share). Scrolling is instant. Keys are ignored with Ctrl/Alt/Meta held, and `Space`/`Enter` on a focused button or link keep their normal behaviour. `FilePager` exposes its scroll container and `TerminalView` passes it to `useKeyboard`. The key hints on the pager's bottom border are hidden on touch devices. The pager body is a normal scroll container (`overflow-y: auto`) and the keys just call `scrollBy`/`scrollTo` on it. Mouse wheel, trackpad and touch therefore work natively; nothing intercepts `wheel` or touch events.
+- `pager`: `q`/`Esc` close, `j`/`k`/`↑`/`↓` one line, `Space`/`PgDn`/`PgUp` one page (minus a line), `g`/`G`/`Home`/`End` top and bottom, `s` share. Scrolling is instant. Keys are ignored with Ctrl/Alt/Meta held, and `Space`/`Enter` on a focused button or link keep their normal behaviour. `FilePager` exposes its scroll container and `TerminalView` passes it to `useKeyboard`. The key hints on the pager's bottom border are hidden on touch devices. The pager body is a normal scroll container (`overflow-y: auto`) and the keys just call `scrollBy`/`scrollTo` on it. Mouse wheel, trackpad and touch therefore work natively; nothing intercepts `wheel` or touch events.
 
 **Scrollbars.** `ScrollArea.vue` wraps the pager body and the scrollback. It hides the native scrollbar and draws a text one instead: a `│` track and a `█` thumb one column wide, sized to the visible part in whole lines, and shown only when the content overflows. The thumb can be dragged, and clicking the track jumps there. Sizes come from the `scroll` event and a `ResizeObserver` on the viewport and its content (images loading, new output). In the pager the track sits on the box's right border, and the bottom border shows the scroll percentage.
 - `program`: any key / `Ctrl+C` stops it.
@@ -322,12 +322,16 @@ GitHub Pages serves `404.html` for any path without a file, including directory 
 
 ### `share`
 
-`navigator.clipboard.writeText(location.origin + urlFor(file))`, then print `copied: <url>`. If the clipboard API fails, just print the URL as a clickable link.
+`lib/share.ts` takes `location.origin + urlFor(file)`. On touch devices with the Web Share API it opens the native share sheet (closing the sheet counts as done); everywhere else it uses `navigator.clipboard.writeText`.
+
+- `share <file>` prints `copied: <url>`, or just the URL as a link if copying fails. A bare `share` prints its usage, and directories give "is a directory".
+- In the pager, `[share]` and `s` share the open file without touching the scrollback. The button reads `[copied]` (or `[copy failed]`) for 2 seconds.
 
 ## 8. Testing
 
 Vitest, on `src/lib/` only:
 
+- `share.ts`: clipboard on desktop, share sheet on touch, cancelled sheet, blocked clipboard.
 - `fs.ts`: `resolve` with `~`, `$HOME`, `..` past root, `.`, trailing slashes, relative vs absolute, hidden entries, files vs dirs, `index.md` not listed, plain text files present, `name` override resolves by display name; `urlFor` / `fromUrl` round trip.
 - `parse.ts`: whitespace, quoted args, flags.
 - `complete.ts`: single match, common prefix, no match, directories get `/`.
@@ -387,7 +391,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 
 - [x] **4.1** Routes and the `HomeView` watcher (file, directory, unknown). Opening a file pushes its URL and closing the pager goes back (or pushes `/`). Files in `ls` and the bar's `about me`/`contact` become real `href` links.
 - [x] **4.2** Switch to vite-ssg: `main.ts` uses `ViteSSG`, a route per Markdown file, Pinia state handover, flat output, and the build copies `index.html` → `404.html`.
-- [ ] **4.3** Meta tags: home defaults in `App.vue`, per-file title, description, `og:*`, `twitter:card` and canonical in `FilePager`.
+- [x] **4.3** Meta tags: home defaults in `App.vue`, per-file title, description, `og:*`, `twitter:card` and canonical in `FilePager`.
 - [ ] **4.4** The `share` command, the `s` key and the `[share]` button.
 - [ ] **4.5** `public/CNAME` and the GitHub Actions Pages workflow.
   Domain: `ljubijankic.si`, which currently points at the old site. Switch it over once this site is ready.

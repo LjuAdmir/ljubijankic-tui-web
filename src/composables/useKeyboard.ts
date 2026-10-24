@@ -1,10 +1,12 @@
 import { onMounted, onUnmounted } from 'vue'
 import { useTerminalStore } from '@/stores/terminal'
 
-export function useKeyboard(
-  focusPrompt: () => void,
-  pagerBody: () => HTMLElement | null | undefined,
-) {
+interface Pager {
+  body: HTMLElement | null | undefined
+  share(): void
+}
+
+export function useKeyboard(focusPrompt: () => void, pager: () => Pager | null | undefined) {
   const store = useTerminalStore()
   let isTouch = false
 
@@ -22,7 +24,7 @@ export function useKeyboard(
   }
 
   function onPagerKey(event: KeyboardEvent) {
-    const body = pagerBody()
+    const body = pager()?.body
     const target = event.target as HTMLElement
     if (!body || (target.matches('button, a') && [' ', 'Enter'].includes(event.key))) return
 
@@ -55,6 +57,9 @@ export function useKeyboard(
       case 'G':
       case 'End':
         body.scrollTo(0, body.scrollHeight)
+        break
+      case 's':
+        pager()!.share()
         break
       default:
         return

@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, useTemplateRef } from 'vue'
+import { computed, ref, useTemplateRef } from 'vue'
 import { useHead, useSeoMeta } from '@unhead/vue'
 import { loadPage, urlFor, type FileEntry } from '@/lib/fs'
+import { share } from '@/lib/share'
 import { siteName, siteUrl } from '@/lib/site'
 import { useTerminalStore } from '@/stores/terminal'
 import ScrollArea from './ScrollArea.vue'
@@ -10,7 +11,6 @@ const props = defineProps<{ file: FileEntry }>()
 
 const store = useTerminalStore()
 const area = useTemplateRef('area')
-defineExpose({ body: computed(() => area.value?.viewport) })
 
 const { title = props.file.name, description, image } = props.file.meta
 const fullTitle = `${title} · ${siteName}`
@@ -26,6 +26,17 @@ useSeoMeta({
   twitterCard: image ? 'summary_large_image' : 'summary',
 })
 useHead({ link: [{ rel: 'canonical', href: url }] })
+
+const shareLabel = ref('[share]')
+
+async function shareFile() {
+  const result = await share(location.origin + urlFor(props.file), title)
+  if (result === 'shared') return
+  shareLabel.value = result === 'copied' ? '[copied]' : '[copy failed]'
+  setTimeout(() => (shareLabel.value = '[share]'), 2000)
+}
+
+defineExpose({ body: computed(() => area.value?.viewport), share: shareFile })
 
 const page = await loadPage(props.file)
 
@@ -54,8 +65,9 @@ const textParts = typeof page === 'string' ? page.split(/(https?:\/\/\S+)/) : []
       <component :is="page" v-else />
     </ScrollArea>
     <footer>
-      <span class="hints">q close · j/k scroll · space page · g/G top/bottom</span>
+      <span class="hints">q close · j/k scroll · space page · g/G top/bottom · s share</span>
       <span v-if="area?.overflows" class="progress">{{ Math.round(area.progress * 100) }}%</span>
+      <button type="button" @click="shareFile">{{ shareLabel }}</button>
       <button type="button" @click="store.closeFile()">[close]</button>
     </footer>
   </article>
