@@ -44,6 +44,7 @@ src/
     PromptBreadcrumb.vue  # clickable cwd
     BottomBar.vue
     FilePager.vue
+    ScrollArea.vue        # scroll container with a text scrollbar (pager, scrollback)
     LifeFetch.vue
     HistorySearch.vue     # Ctrl+R overlay
   composables/
@@ -236,7 +237,9 @@ Clicking anything calls `execute(command)`. That way typed and clicked commands 
 One `keydown` listener on `window`, switching on `store.mode`:
 
 - `shell`: printable keys focus the prompt input (desktop only); handles `Tab`, `↑`/`↓`, `Ctrl+R/L/C/U/A/E`.
-- `pager`: `q`, `Esc`, `j`/`k`, `g`/`G`, `Space`, `PgUp`/`PgDn`, `s`. The pager body is a normal scroll container (`overflow-y: auto`) and the keys just call `scrollBy`/`scrollTo` on it. Mouse wheel, trackpad, touch and the scrollbar therefore work natively; nothing intercepts `wheel` or touch events.
+- `pager`: `q`/`Esc` close, `j`/`k`/`↑`/`↓` one line, `Space`/`PgDn`/`PgUp` one page (minus a line), `g`/`G`/`Home`/`End` top and bottom, and later `s` (share). Scrolling is instant. Keys are ignored with Ctrl/Alt/Meta held, and `Space`/`Enter` on a focused button or link keep their normal behaviour. `FilePager` exposes its scroll container and `TerminalView` passes it to `useKeyboard`. The key hints on the pager's bottom border are hidden on touch devices. The pager body is a normal scroll container (`overflow-y: auto`) and the keys just call `scrollBy`/`scrollTo` on it. Mouse wheel, trackpad and touch therefore work natively; nothing intercepts `wheel` or touch events.
+
+**Scrollbars.** `ScrollArea.vue` wraps the pager body and the scrollback. It hides the native scrollbar and draws a text one instead: a `│` track and a `█` thumb one column wide, sized to the visible part in whole lines, and shown only when the content overflows. The thumb can be dragged, and clicking the track jumps there. Sizes come from the `scroll` event and a `ResizeObserver` on the viewport and its content (images loading, new output). In the pager the track sits on the box's right border, and the bottom border shows the scroll percentage.
 - `program`: any key / `Ctrl+C` stops it.
 
 The prompt is a real `<input>` styled to look like a terminal line. That keeps IME, paste, mobile keyboards and screen readers working. `Ctrl+C` is only taken over when no text is selected.
@@ -370,7 +373,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 ### 3. Pager
 
 - [x] **3.1** `fs.loadPage`, plus `openFile` and the `pager` mode in the store; `cat`/`open`/`less` with the "is a directory" error.
-- [ ] **3.2** `FilePager`: header (path, date, tags), rendered Markdown with images, plain text with clickable links, and a `[close]` button.
+- [x] **3.2** `FilePager`: header (path, date, tags), rendered Markdown with images, plain text with clickable links, and a `[close]` button.
 - [ ] **3.3** Pager keys in `useKeyboard` (`q`/`Esc`, `j`/`k`, `g`/`G`, `Space`, `PgUp`/`PgDn`) on a native scroll container.
 - [ ] **3.4** Files in `ls` output are clickable. The bottom bar is wired up (`home` runs a plain `cd ~` until 5.1).
 

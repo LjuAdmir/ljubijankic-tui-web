@@ -6,27 +6,37 @@ import OutputLine from './OutputLine.vue'
 import PromptLine from './PromptLine.vue'
 import BottomBar from './BottomBar.vue'
 import FilePager from './FilePager.vue'
+import ScrollArea from './ScrollArea.vue'
 
 const store = useTerminalStore()
 const scrollback = useTemplateRef('scrollback')
 const prompt = useTemplateRef('prompt')
+const pager = useTemplateRef('pager')
 
-useKeyboard(() => prompt.value?.focus())
+useKeyboard(
+  () => prompt.value?.focus(),
+  () => pager.value?.body,
+)
 
 watch(
   () => store.output.at(-1)?.id,
-  () => scrollback.value?.scrollTo({ top: scrollback.value.scrollHeight }),
+  () => scrollback.value?.viewport?.scrollTo({ top: scrollback.value.viewport.scrollHeight }),
   { flush: 'post' },
 )
 </script>
 
 <template>
   <div class="terminal">
-    <FilePager v-if="store.openFile" :key="store.openFile.path" :file="store.openFile" />
+    <FilePager
+      v-if="store.openFile"
+      ref="pager"
+      :key="store.openFile.path"
+      :file="store.openFile"
+    />
     <!-- v-show keeps the scroll position while a file is open -->
-    <div v-show="!store.openFile" ref="scrollback" class="scrollback">
+    <ScrollArea v-show="!store.openFile" ref="scrollback" class="scrollback">
       <OutputLine v-for="entry in store.output" :key="entry.id" :entry="entry" />
-    </div>
+    </ScrollArea>
     <PromptLine v-show="!store.openFile" ref="prompt" />
     <BottomBar />
   </div>
@@ -41,7 +51,6 @@ watch(
 
 .scrollback {
   flex: 1;
-  overflow-y: auto;
-  padding: 1lh 1ch 0;
+  padding: 1lh 0 0 1ch;
 }
 </style>

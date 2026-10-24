@@ -1,11 +1,13 @@
 <script setup lang="ts">
-import { computed, shallowRef, type Component } from 'vue'
+import { computed, shallowRef, useTemplateRef, type Component } from 'vue'
 import { loadPage, type FileEntry } from '@/lib/fs'
 import { useTerminalStore } from '@/stores/terminal'
+import ScrollArea from './ScrollArea.vue'
 
 const props = defineProps<{ file: FileEntry }>()
 
 const store = useTerminalStore()
+const area = useTemplateRef('area')
 const page = shallowRef<Component | string>()
 loadPage(props.file).then((loaded) => (page.value = loaded))
 
@@ -18,6 +20,8 @@ const details = computed(() => {
 const textParts = computed(() =>
   typeof page.value === 'string' ? page.value.split(/(https?:\/\/\S+)/) : [],
 )
+
+defineExpose({ body: computed(() => area.value?.viewport) })
 </script>
 
 <template>
@@ -26,7 +30,7 @@ const textParts = computed(() =>
       <span>{{ file.path }}</span>
       <span v-if="details">{{ details }}</span>
     </header>
-    <div class="body">
+    <ScrollArea ref="area" class="body">
       <div v-if="typeof page === 'string'" class="text">
         <template v-for="(part, index) in textParts" :key="index">
           <a v-if="index % 2" :href="part" target="_blank" rel="noopener">{{ part }}</a>
@@ -34,8 +38,10 @@ const textParts = computed(() =>
         </template>
       </div>
       <component :is="page" v-else-if="page" />
-    </div>
+    </ScrollArea>
     <footer>
+      <span class="hints">q close · j/k scroll · space page · g/G top/bottom</span>
+      <span v-if="area?.overflows" class="progress">{{ Math.round(area.progress * 100) }}%</span>
       <button type="button" @click="store.closeFile()">[close]</button>
     </footer>
   </article>
@@ -61,26 +67,48 @@ footer {
   justify-content: flex-end;
 }
 
-header span {
+/* labels sit on the border, the background hides the line behind them */
+header span,
+footer > * {
+  flex: none;
   padding: 0 1ch;
   background: var(--background0);
   white-space: nowrap;
 }
 
-header span:first-child {
+header span:first-child,
+.hints {
+  flex: initial;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+header span:first-child {
   color: var(--blue);
 }
 
-header span:last-child {
+header span:last-child,
+.hints,
+.progress {
   color: var(--foreground2);
+}
+
+.hints {
+  margin-right: auto;
+}
+
+@media (pointer: coarse) {
+  .hints {
+    display: none;
+  }
 }
 
 footer button {
   all: unset;
+  flex: none;
   padding: 0 1ch;
   background: var(--background0);
+  white-space: nowrap;
   cursor: pointer;
 }
 
@@ -90,14 +118,15 @@ footer button:focus-visible {
 }
 
 .body {
+  --scroll-track: transparent;
   flex: 1;
-  overflow-y: auto;
-  padding: 0 1ch;
+  margin-right: -1ch;
+  padding-left: 1ch;
   word-break: normal;
   overflow-wrap: break-word;
 }
 
-.body > *,
+.text,
 .body :deep(.markdown-body) {
   max-width: 80ch;
 }
