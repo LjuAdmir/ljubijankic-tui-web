@@ -154,13 +154,13 @@ Every clickable element maps to one of these commands.
 | `history [-c]` | Show the commands you typed (numbered, click to rerun); `-c` clears them |
 | `lifefetch` | Home screen (see §3) |
 | `theme [name]` | List themes, or switch theme |
-| `whoami`, `date`, `echo <text>` | What you'd expect |
+| `whoami`, `date`, `echo <text>` | What you'd expect. `whoami` adds a muted joke line pointing to `cat ~/about.md` (clickable); `date` prints like GNU date (`Sun Oct 25 14:03:12 CET 2026`) in the visitor's time zone |
 
 ### Fun
 
 | Kind | Commands |
 |---|---|
-| Classic gags | `sudo …` ("nice try"), `rm -rf /` (fake meltdown), `exit`, `vim` / `emacs` ("how do I quit?"), `whoami` |
+| Classic gags | `sudo …` ("nice try"), `rm -rf /` (fake meltdown), `exit`, `vim` / `emacs` ("how do I quit?") |
 | Toys | `cowsay <text>`, `fortune`, `sl` (steam locomotive), `matrix` (rain animation, any key stops it), `neofetch` (alias of `lifefetch`) |
 | Easter eggs | Hidden commands not listed in `help`, `.secrets.md` hidden file, `.ssh/` hidden directory with joke files, Konami code |
 

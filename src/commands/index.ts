@@ -4,6 +4,7 @@ import type { Command } from './types'
 import cat from './cat'
 import cd from './cd'
 import clear from './clear'
+import date from './date'
 import echo from './echo'
 import help from './help'
 import history from './history'
@@ -13,11 +14,13 @@ import pwd from './pwd'
 import share from './share'
 import theme from './theme'
 import tree from './tree'
+import whoami from './whoami'
 
 const commands: Command[] = [
   cat,
   cd,
   clear,
+  date,
   echo,
   help,
   history,
@@ -27,6 +30,7 @@ const commands: Command[] = [
   share,
   theme,
   tree,
+  whoami,
 ]
 
 export function allCommands(): Command[] {

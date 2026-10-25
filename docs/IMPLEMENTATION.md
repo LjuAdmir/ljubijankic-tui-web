@@ -347,13 +347,14 @@ GitHub Pages serves `404.html` for any path without a file, including directory 
 
 ## 8. Testing
 
-Vitest, on `src/lib/`, `useHistory`, `useTheme` and the command registry:
+Vitest, on `src/lib/`, `useHistory`, `useTheme`, the command registry and `date` formatting:
 
 - `share.ts`: clipboard on desktop, share sheet on touch, cancelled sheet, blocked clipboard.
 - `fs.ts`: `resolve` with `~`, `$HOME`, `..` past root, `.`, trailing slashes, relative vs absolute, hidden entries, files vs dirs, `index.md` not listed, plain text files present, `name` override resolves by display name; `urlFor` / `fromUrl` round trip.
 - `parse.ts`: whitespace, quoted args, flags.
 - `complete.ts`: matching, paths (nested, `~/`, `..`, dotfiles only after `.`, drafts, directories only), common prefix.
 - `commands/index.ts`: `completeInput` for command names, paths, and commands' own completion.
+- `commands/date.ts`: `formatDate` matches GNU date's default format (space-padded day, zero-padded time).
 - `fuzzy.ts`: edit distance (including swaps), `closest` thresholds and ties; `match` positions, empty query, runs and word starts ranking.
 - `commands/index.ts`: `suggestCommand` prefers names over aliases, skips unrelated input.
 - `storage.ts`: JSON round trip, missing key, invalid JSON, blocked storage.
@@ -428,7 +429,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **5.4** `HistorySearch` (`Ctrl+R`).
 - [x] **5.5** `lib/complete.ts` with tests, wired to `Tab`.
 - [x] **5.6** Shortcuts: `Ctrl+L`, `Ctrl+C`, `Ctrl+U`, `Ctrl+A`, `Ctrl+E`.
-- [ ] **5.7** `useTheme`, the `theme` command, and the inline no-flash script in `index.html`.
+- [x] **5.7** `useTheme`, the `theme` command, and the inline no-flash script in `index.html`.
 - [ ] **5.8** `whoami` and `date`.
 
 ### 6. Fun and polish
