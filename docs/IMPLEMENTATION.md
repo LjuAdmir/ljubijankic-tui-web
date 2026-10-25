@@ -48,6 +48,7 @@ src/
     ScrollArea.vue        # scroll container with a text scrollbar (pager, scrollback)
     LifeFetch.vue
     HistorySearch.vue     # Ctrl+R overlay
+    CowSay.vue            # cowsay output, bubble fits the screen width
   composables/
     useKeyboard.ts
     useHistory.ts
@@ -69,6 +70,7 @@ src/
     fuzzy.ts              # typo distance, Ctrl+R matching
     storage.ts            # safe localStorage get/set
     site.ts               # site name and URL, for meta tags
+    cowsay.ts             # speech bubble + cow
   App.vue
   main.ts
 ```
@@ -357,9 +359,10 @@ Vitest, on `src/lib/`, `useHistory`, `useTheme`, the command registry and `date`
 - `parse.ts`: whitespace, quoted args, flags.
 - `complete.ts`: matching, paths (nested, `~/`, `..`, dotfiles only after `.`, drafts, directories only), common prefix.
 - `commands/index.ts`: `completeInput` for command names, paths, and commands' own completion.
+- `cowsay.ts`: one-line and multi-line bubbles, narrower widths, words longer than the bubble.
 - `commands/date.ts`: `formatDate` matches GNU date's default format (space-padded day, zero-padded time).
 - `fuzzy.ts`: edit distance (including swaps), `closest` thresholds and ties; `match` positions, empty query, runs and word starts ranking.
-- `commands/index.ts`: `suggestCommand` prefers names over aliases, skips unrelated input.
+- `commands/index.ts`: `suggestCommand` prefers names over aliases, skips unrelated input, never suggests gags.
 - `storage.ts`: JSON round trip, missing key, invalid JSON, blocked storage.
 - `useHistory`: cap of 50, de-duplication, persistence and loading, clear, prefix walk with draft restore, each command once.
 - `useTheme`: mocha default, apply and save, unknown saved theme ignored.
@@ -437,7 +440,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 
 ### 6. Fun and polish
 
-- [ ] **6.1** Gags: `sudo`, `rm -rf /`, `exit`, `vim`/`emacs`.
+- [x] **6.1** Gags: `sudo`, `rm -rf /`, `exit`, `vim`/`emacs`.
 - [ ] **6.2** Toys: `cowsay`, `fortune`.
 - [ ] **6.3** Programs: `program` mode, `sl` and `matrix` (any key or `Ctrl+C` stops them; reduced motion respected).
 - [ ] **6.4** Hidden commands and the Konami code.

@@ -5,10 +5,15 @@ import type { OutputComponent } from '@/commands/types'
 import PromptLabel from './PromptLabel.vue'
 import LifeFetch from './LifeFetch.vue'
 import ThemeList from './ThemeList.vue'
+import CowSay from './CowSay.vue'
 
 defineProps<{ entry: OutputEntry }>()
 
-const components: Record<OutputComponent, Component> = { lifefetch: LifeFetch, themes: ThemeList }
+const components: Record<OutputComponent, Component> = {
+  lifefetch: LifeFetch,
+  themes: ThemeList,
+  cowsay: CowSay,
+}
 
 const store = useTerminalStore()
 </script>

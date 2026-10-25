@@ -24,7 +24,7 @@ describe('completeInput', () => {
   const candidates = (input: string, cwd = '~') => completeInput(input, cwd).candidates
 
   it('completes command names and aliases first', () => {
-    expect(candidates('c')).toEqual(['cat', 'cd', 'clear'])
+    expect(candidates('c')).toEqual(['cat', 'cd', 'clear', 'cowsay'])
     expect(candidates('  l')).toEqual(['less', 'lifefetch', 'll', 'ls'])
     expect(completeInput('h', '~')).toEqual({ start: 0, candidates: ['help', 'history'] })
     expect(candidates('e')).toEqual(['echo'])

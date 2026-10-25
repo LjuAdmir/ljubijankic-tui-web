@@ -15,8 +15,10 @@ import share from './share'
 import theme from './theme'
 import tree from './tree'
 import whoami from './whoami'
+import cowsay from './fun/cowsay'
 import emacs from './fun/emacs'
 import exit from './fun/exit'
+import fortune from './fun/fortune'
 import nano from './fun/nano'
 import rm from './fun/rm'
 import sudo from './fun/sudo'
@@ -37,8 +39,10 @@ const commands: Command[] = [
   theme,
   tree,
   whoami,
+  cowsay,
   emacs,
   exit,
+  fortune,
   nano,
   rm,
   sudo,

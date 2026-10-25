@@ -161,7 +161,7 @@ Every clickable element maps to one of these commands.
 | Kind | Commands |
 |---|---|
 | Classic gags | `sudo …` (the real sudoers refusal), `rm -rf /` (also `~` and `*`: a fake deletion log of the real files, a short flicker with inverted colours, then "just kidding"; any other `rm` hits a read-only file system), `exit` (fake logout, the prompt comes back on click or any key), `vim` / `vi` / `nvim`, `emacs`, `nano` (a joke line each). Only listed by `help -a` |
-| Toys | `cowsay <text>`, `fortune`, `sl` (steam locomotive), `matrix` (rain animation, any key stops it), `neofetch` (alias of `lifefetch`) |
+| Toys | `cowsay [text]` (says "Moo." without text; the bubble wraps at 40 columns, narrower on phones), `fortune` (classic Unix-style fortunes), `sl` (steam locomotive), `matrix` (rain animation, any key stops it), `neofetch` (alias of `lifefetch`) |
 | Easter eggs | Hidden commands not listed in `help`, `.secrets.md` hidden file, `.ssh/` hidden directory with joke files, Konami code |
 
 ### Errors
