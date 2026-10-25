@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted } from 'vue'
+import { nextTick, onMounted, onUnmounted } from 'vue'
 import { useTerminalStore } from '@/stores/terminal'
 
 interface Prompt {
@@ -20,6 +20,7 @@ export function useKeyboard(
   let isTouch = false
 
   function onKeydown(event: KeyboardEvent) {
+    if (!store.connected) return onDisconnectedKey(event)
     if (event.ctrlKey || event.metaKey || event.altKey) {
       if (store.mode === 'shell' && event.ctrlKey && !event.altKey && !event.metaKey) {
         onShellShortcut(event)
@@ -34,6 +35,18 @@ export function useKeyboard(
     // Space still activates a focused button or link.
     if (event.key === ' ' && target.matches('button, a')) return
 
+    prompt()?.focus()
+  }
+
+  // after `exit`, any key reconnects
+  async function onDisconnectedKey(event: KeyboardEvent) {
+    const target = event.target as HTMLElement
+    if (event.ctrlKey || event.metaKey || event.altKey || target.matches('button, a')) return
+    if (event.key.length !== 1 && event.key !== 'Enter') return
+
+    event.preventDefault()
+    await store.execute('lifefetch')
+    await nextTick()
     prompt()?.focus()
   }
 

@@ -174,6 +174,7 @@ interface Command {
   summary: string
   usage?: string
   hidden?: boolean
+  gag?: boolean                                          // only listed by `help -a`
   complete?: (word: string, cwd: string) => string[]   // Tab candidates, paths by default
   run: (args: string[], ctx: CommandContext) => void | Promise<void>
 }
@@ -190,6 +191,8 @@ interface CommandContext {
   open(file: FileEntry): void                                  // pager
   run(component: Component): void                              // full-screen programs: matrix, sl
   clear(): void
+  glitch(): Promise<void>                                      // the rm -rf flicker
+  disconnect(): void                                           // exit: hides the prompt until the next command
 }
 ```
 
@@ -211,7 +214,7 @@ So `ls` returns file names as `href` segments (real links, see §7) and director
 
 ### Registry
 
-`commands/index.ts` imports each command file and exports `findCommand(name)`, `allCommands()` and `suggestCommand(name)`. Unknown names get a "did you mean" suggestion: the closest visible command name or alias by edit distance (`fuzzy.ts`), main names winning ties over aliases (`lss` → `ls`, not `less`), then alphabetical. Hidden commands are never suggested. The suggestion keeps the typed arguments and is clickable: `lss -a` → "Did you mean `ls -a`?".
+`commands/index.ts` imports each command file and exports `findCommand(name)`, `allCommands()` and `suggestCommand(name)`. Unknown names get a "did you mean" suggestion: the closest visible command name or alias by edit distance (`fuzzy.ts`), main names winning ties over aliases (`lss` → `ls`, not `less`), then alphabetical. Hidden commands and gags are never suggested or completed. The suggestion keeps the typed arguments and is clickable: `lss -a` → "Did you mean `ls -a`?".
 
 Aliases: `cat`/`open`/`less` are one command; `neofetch` is an alias of `lifefetch`.
 
@@ -430,7 +433,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **5.5** `lib/complete.ts` with tests, wired to `Tab`.
 - [x] **5.6** Shortcuts: `Ctrl+L`, `Ctrl+C`, `Ctrl+U`, `Ctrl+A`, `Ctrl+E`.
 - [x] **5.7** `useTheme`, the `theme` command, and the inline no-flash script in `index.html`.
-- [ ] **5.8** `whoami` and `date`.
+- [x] **5.8** `whoami` and `date`.
 
 ### 6. Fun and polish
 

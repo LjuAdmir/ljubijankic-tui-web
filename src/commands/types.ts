@@ -20,6 +20,8 @@ export interface CommandContext {
   printComponent(name: OutputComponent, props?: Record<string, unknown>): void
   open(file: FileEntry): void
   clear(): void
+  glitch(): Promise<void>
+  disconnect(): void
 }
 
 export interface Command {
@@ -28,6 +30,8 @@ export interface Command {
   summary: string
   usage?: string
   hidden?: boolean
+  // only listed by `help -a`
+  gag?: boolean
   // candidates for the word being typed, paths by default
   complete?: (word: string, cwd: string) => string[]
   run: (args: string[], ctx: CommandContext) => void | Promise<void>

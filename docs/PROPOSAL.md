@@ -149,7 +149,7 @@ Every clickable element maps to one of these commands.
 
 | Command | Behaviour |
 |---|---|
-| `help [command]` | List commands (each clickable), or show usage for one |
+| `help [-a] [command]` | List commands (each clickable), or show usage for one. A muted footer hints at `-a`, which also lists the gags |
 | `clear` | Clear the scrollback |
 | `history [-c]` | Show the commands you typed (numbered, click to rerun); `-c` clears them |
 | `lifefetch` | Home screen (see §3) |
@@ -160,7 +160,7 @@ Every clickable element maps to one of these commands.
 
 | Kind | Commands |
 |---|---|
-| Classic gags | `sudo …` ("nice try"), `rm -rf /` (fake meltdown), `exit`, `vim` / `emacs` ("how do I quit?") |
+| Classic gags | `sudo …` (the real sudoers refusal), `rm -rf /` (also `~` and `*`: a fake deletion log of the real files, a short flicker with inverted colours, then "just kidding"; any other `rm` hits a read-only file system), `exit` (fake logout, the prompt comes back on click or any key), `vim` / `vi` / `nvim`, `emacs`, `nano` (a joke line each). Only listed by `help -a` |
 | Toys | `cowsay <text>`, `fortune`, `sl` (steam locomotive), `matrix` (rain animation, any key stops it), `neofetch` (alias of `lifefetch`) |
 | Easter eggs | Hidden commands not listed in `help`, `.secrets.md` hidden file, `.ssh/` hidden directory with joke files, Konami code |
 

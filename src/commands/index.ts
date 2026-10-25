@@ -15,6 +15,12 @@ import share from './share'
 import theme from './theme'
 import tree from './tree'
 import whoami from './whoami'
+import emacs from './fun/emacs'
+import exit from './fun/exit'
+import nano from './fun/nano'
+import rm from './fun/rm'
+import sudo from './fun/sudo'
+import vim from './fun/vim'
 
 const commands: Command[] = [
   cat,
@@ -31,6 +37,12 @@ const commands: Command[] = [
   theme,
   tree,
   whoami,
+  emacs,
+  exit,
+  nano,
+  rm,
+  sudo,
+  vim,
 ]
 
 export function allCommands(): Command[] {
@@ -41,8 +53,8 @@ export function findCommand(name: string): Command | undefined {
   return commands.find((command) => command.name === name || command.aliases?.includes(name))
 }
 
-// hidden commands are never suggested or completed, so they don't give the easter eggs away
-const visible = () => commands.filter((command) => !command.hidden)
+// hidden commands and gags are never suggested or completed, so they don't give the jokes away
+const visible = () => commands.filter((command) => !command.hidden && !command.gag)
 
 export function commandNames(): string[] {
   return visible().flatMap((command) => [command.name, ...(command.aliases ?? [])])

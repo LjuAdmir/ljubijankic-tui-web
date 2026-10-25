@@ -18,6 +18,9 @@ export const useTerminalStore = defineStore('terminal', () => {
   const openFile = ref<FileEntry | null>(null)
   // the prompt's text, here so output lines (completion candidates) can fill it
   const input = ref('')
+  const glitching = ref(false)
+  // false after `exit`, which hides the prompt until the next command
+  const connected = ref(true)
 
   // derived from the output rather than a counter, so it survives the prerendered state handover
   const nextId = () => (output.value.at(-1)?.id ?? -1) + 1
@@ -32,6 +35,16 @@ export const useTerminalStore = defineStore('terminal', () => {
 
   function clear() {
     output.value = []
+  }
+
+  async function glitch() {
+    glitching.value = true
+    await new Promise((resolve) => setTimeout(resolve, 1200))
+    glitching.value = false
+  }
+
+  function disconnect() {
+    connected.value = false
   }
 
   function cd(path: string) {
@@ -59,6 +72,7 @@ export const useTerminalStore = defineStore('terminal', () => {
   }
 
   async function run(input: string) {
+    connected.value = true
     echo(input)
 
     const { name, args } = parse(input)
@@ -78,7 +92,16 @@ export const useTerminalStore = defineStore('terminal', () => {
       return
     }
 
-    const ctx: CommandContext = { cwd: cwd.value, cd, print, printComponent, open, clear }
+    const ctx: CommandContext = {
+      cwd: cwd.value,
+      cd,
+      print,
+      printComponent,
+      open,
+      clear,
+      glitch,
+      disconnect,
+    }
     await command.run(args, ctx)
   }
 
@@ -89,6 +112,8 @@ export const useTerminalStore = defineStore('terminal', () => {
     mode,
     openFile,
     input,
+    glitching,
+    connected,
     execute,
     echo,
     print,

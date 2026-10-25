@@ -14,6 +14,10 @@ describe('suggestCommand', () => {
   it('gives nothing for unrelated input', () => {
     expect(suggestCommand('xyz')).toBeUndefined()
   })
+
+  it('never suggests gags', () => {
+    expect(suggestCommand('sudi')).toBeUndefined()
+  })
 })
 
 describe('completeInput', () => {
@@ -23,6 +27,7 @@ describe('completeInput', () => {
     expect(candidates('c')).toEqual(['cat', 'cd', 'clear'])
     expect(candidates('  l')).toEqual(['less', 'lifefetch', 'll', 'ls'])
     expect(completeInput('h', '~')).toEqual({ start: 0, candidates: ['help', 'history'] })
+    expect(candidates('e')).toEqual(['echo'])
   })
 
   it('completes paths for arguments', () => {
