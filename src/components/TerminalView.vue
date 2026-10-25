@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { nextTick, useTemplateRef, watch } from 'vue'
+import { computed, nextTick, useTemplateRef, watch, type Component } from 'vue'
 import { useTerminalStore } from '@/stores/terminal'
 import { useKeyboard } from '@/composables/useKeyboard'
 import OutputLine from './OutputLine.vue'
@@ -7,11 +7,17 @@ import PromptLine from './PromptLine.vue'
 import BottomBar from './BottomBar.vue'
 import FilePager from './FilePager.vue'
 import ScrollArea from './ScrollArea.vue'
+import SlTrain from './SlTrain.vue'
+import MatrixRain from './MatrixRain.vue'
+import type { Program } from '@/commands/types'
 
 const store = useTerminalStore()
 const scrollback = useTemplateRef('scrollback')
 const prompt = useTemplateRef('prompt')
 const pager = useTemplateRef('pager')
+
+const programs: Record<Program, Component> = { sl: SlTrain, matrix: MatrixRain }
+const shell = computed(() => !store.openFile && !store.program)
 
 useKeyboard(
   () => prompt.value,
@@ -40,11 +46,14 @@ watch(
         :file="store.openFile"
       />
     </Suspense>
-    <!-- v-show keeps the scroll position while a file is open -->
-    <ScrollArea v-show="!store.openFile" ref="scrollback" class="scrollback">
+    <div v-if="store.program" class="program" @click="store.stopProgram()">
+      <component :is="programs[store.program]" @exit="store.stopProgram()" />
+    </div>
+    <!-- v-show keeps the scroll position while a file or program is open -->
+    <ScrollArea v-show="shell" ref="scrollback" class="scrollback">
       <OutputLine v-for="entry in store.output" :key="entry.id" :entry="entry" />
     </ScrollArea>
-    <PromptLine v-show="!store.openFile && store.connected" ref="prompt" />
+    <PromptLine v-show="shell && store.connected" ref="prompt" />
     <BottomBar />
   </div>
 </template>
@@ -59,6 +68,17 @@ watch(
 .scrollback {
   flex: 1;
   padding: 1lh 0 0 1ch;
+}
+
+.program {
+  position: relative;
+  flex: 1;
+  cursor: pointer;
+}
+
+.program > * {
+  position: absolute;
+  inset: 0;
 }
 
 /* the rm -rf meltdown: three inversions at most, the limit for flashing content */

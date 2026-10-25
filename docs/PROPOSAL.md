@@ -161,7 +161,7 @@ Every clickable element maps to one of these commands.
 | Kind | Commands |
 |---|---|
 | Classic gags | `sudo …` (the real sudoers refusal), `rm -rf /` (also `~` and `*`: a fake deletion log of the real files, a short flicker with inverted colours, then "just kidding"; any other `rm` hits a read-only file system), `exit` (fake logout, the prompt comes back on click or any key), `vim` / `vi` / `nvim`, `emacs`, `nano` (a joke line each). Only listed by `help -a` |
-| Toys | `cowsay [text]` (says "Moo." without text; the bubble wraps at 40 columns, narrower on phones), `fortune` (classic Unix-style fortunes), `sl` (steam locomotive), `matrix` (rain animation, any key stops it), `neofetch` (alias of `lifefetch`) |
+| Toys | `cowsay [text]` (says "Moo." without text; the bubble wraps at 40 columns, narrower on phones), `fortune` (classic Unix-style fortunes), `sl` (the classic steam locomotive crosses the screen once), `matrix` (katakana rain in the theme's green), both in place of the scrollback, stopped by any key, `Ctrl+C` or a click, `neofetch` (alias of `lifefetch`) |
 | Easter eggs | Hidden commands not listed in `help`, `.secrets.md` hidden file, `.ssh/` hidden directory with joke files, Konami code |
 
 ### Errors
@@ -262,7 +262,7 @@ On desktop the page captures the keyboard: typing anywhere goes to the prompt.
 - File pages are pre-generated with a proper title, description, and preview image from their metadata.
 - Clickable entries are real links where they lead to a file, so they work with screen readers, middle-click and "copy link".
 - New output is announced to screen readers.
-- Animations (`matrix`, `sl`, `rm -rf /`) respect the "reduce motion" system setting.
+- Animations respect the "reduce motion" system setting: `sl` and `matrix` politely decline, `rm -rf /` prints its log at once and inverts without flickering.
 
 ## 13. Open items
 

@@ -3,7 +3,7 @@ import { defineStore } from 'pinia'
 import { parse } from '@/lib/parse'
 import { findCommand, suggestCommand } from '@/commands'
 import type { FileEntry } from '@/lib/fs'
-import type { CommandContext, Line, OutputComponent } from '@/commands/types'
+import type { CommandContext, Line, OutputComponent, Program } from '@/commands/types'
 
 export type OutputEntry =
   | { id: number; kind: 'prompt'; cwd: string; input: string }
@@ -16,6 +16,7 @@ export const useTerminalStore = defineStore('terminal', () => {
   const output = ref<OutputEntry[]>([])
   const mode = ref<'shell' | 'pager' | 'program'>('shell')
   const openFile = ref<FileEntry | null>(null)
+  const program = ref<Program | null>(null)
   // the prompt's text, here so output lines (completion candidates) can fill it
   const input = ref('')
   const glitching = ref(false)
@@ -58,6 +59,16 @@ export const useTerminalStore = defineStore('terminal', () => {
     mode.value = 'pager'
   }
 
+  function startProgram(name: Program) {
+    program.value = name
+    mode.value = 'program'
+  }
+
+  function stopProgram() {
+    program.value = null
+    mode.value = 'shell'
+  }
+
   function closeFile() {
     openFile.value = null
     mode.value = 'shell'
@@ -72,6 +83,8 @@ export const useTerminalStore = defineStore('terminal', () => {
   }
 
   async function run(input: string) {
+    // the bottom bar can still run commands while a program is on screen
+    if (program.value) stopProgram()
     connected.value = true
     echo(input)
 
@@ -97,6 +110,7 @@ export const useTerminalStore = defineStore('terminal', () => {
       cd,
       print,
       printComponent,
+      startProgram,
       open,
       clear,
       glitch,
@@ -111,6 +125,7 @@ export const useTerminalStore = defineStore('terminal', () => {
     output,
     mode,
     openFile,
+    program,
     input,
     glitching,
     connected,
@@ -119,5 +134,6 @@ export const useTerminalStore = defineStore('terminal', () => {
     print,
     clear,
     closeFile,
+    stopProgram,
   }
 })

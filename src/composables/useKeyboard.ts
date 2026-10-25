@@ -1,4 +1,4 @@
-import { nextTick, onMounted, onUnmounted } from 'vue'
+import { nextTick, onMounted, onUnmounted, watch } from 'vue'
 import { useTerminalStore } from '@/stores/terminal'
 
 interface Prompt {
@@ -20,6 +20,7 @@ export function useKeyboard(
   let isTouch = false
 
   function onKeydown(event: KeyboardEvent) {
+    if (store.mode === 'program') return onProgramKey(event)
     if (!store.connected) return onDisconnectedKey(event)
     if (event.ctrlKey || event.metaKey || event.altKey) {
       if (store.mode === 'shell' && event.ctrlKey && !event.altKey && !event.metaKey) {
@@ -37,6 +38,23 @@ export function useKeyboard(
 
     prompt()?.focus()
   }
+
+  function onProgramKey(event: KeyboardEvent) {
+    if (['Shift', 'Control', 'Alt', 'Meta'].includes(event.key)) return
+    store.stopProgram()
+    // the key only stops the program; browser shortcuts with Alt or Meta still work
+    if (!event.altKey && !event.metaKey) event.preventDefault()
+  }
+
+  // the prompt was hidden while the program ran, so it lost focus
+  watch(
+    () => store.mode,
+    async (_, previous) => {
+      if (previous !== 'program' || isTouch) return
+      await nextTick()
+      prompt()?.focus()
+    },
+  )
 
   // after `exit`, any key reconnects
   async function onDisconnectedKey(event: KeyboardEvent) {

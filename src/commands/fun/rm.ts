@@ -1,5 +1,6 @@
 import { list, root, type Entry } from '@/lib/fs'
 import { hasFlag } from '@/lib/parse'
+import { prefersReducedMotion } from '@/lib/motion'
 import type { Command, Line } from '../types'
 
 const targets = ['/', '~', '*']
@@ -34,7 +35,7 @@ export default {
       return
     }
 
-    const instant = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const instant = prefersReducedMotion()
     for (const line of list(root, { all: true }).flatMap(removed)) {
       ctx.print([{ text: line }])
       if (!instant) await sleep(80)

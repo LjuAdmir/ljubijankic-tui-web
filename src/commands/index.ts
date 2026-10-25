@@ -19,8 +19,10 @@ import cowsay from './fun/cowsay'
 import emacs from './fun/emacs'
 import exit from './fun/exit'
 import fortune from './fun/fortune'
+import matrix from './fun/matrix'
 import nano from './fun/nano'
 import rm from './fun/rm'
+import sl from './fun/sl'
 import sudo from './fun/sudo'
 import vim from './fun/vim'
 
@@ -43,8 +45,10 @@ const commands: Command[] = [
   emacs,
   exit,
   fortune,
+  matrix,
   nano,
   rm,
+  sl,
   sudo,
   vim,
 ]
