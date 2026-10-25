@@ -12,19 +12,22 @@ const letters = [
   ['', ''],
 ] as const
 
-// runs of █ get a solid background, which hides the seams browsers leave between block glyphs
+// runs of █ become spaces on a solid background, Android's monospace font has no block glyphs
 function runs(text: string, colour: string) {
   return text
     .split(/(█+)/)
     .filter(Boolean)
-    .map((run) => ({ text: run, class: run.startsWith('█') ? `${colour} fill` : '' }))
+    .map((run) =>
+      run.startsWith('█')
+        ? { text: ' '.repeat(run.length), class: `${colour} fill` }
+        : { text: run, class: '' },
+    )
 }
 
 const logo = letters.map(([a, l]) => [
-  { text: '│  ', class: 'frame' },
+  { text: '  ', class: '' },
   ...runs(a.padEnd(8), 'a'),
   ...runs(l.padEnd(8), 'l'),
-  { text: '│', class: 'frame' },
 ])
 
 const info = reactive({
@@ -57,11 +60,9 @@ onMounted(() => {
 <template>
   <div class="lifefetch">
     <div class="logo" aria-hidden="true">
-      <div class="frame">╭──────────────────╮</div>
       <div v-for="(row, index) in logo" :key="index">
         <span v-for="(run, i) in row" :key="i" :class="run.class">{{ run.text }}</span>
       </div>
-      <div class="frame">╰──────────────────╯</div>
     </div>
 
     <div>
@@ -87,9 +88,7 @@ onMounted(() => {
           v-for="colour in colours"
           :key="colour"
           :style="{ backgroundColor: `var(--${colour})` }"
-        >
-          ███
-        </span>
+        ></span>
       </div>
     </div>
 
@@ -109,7 +108,13 @@ onMounted(() => {
   word-break: normal;
 }
 
+/* a border instead of box drawing glyphs, laid out like the ╭─╮ frame it replaced */
 .logo {
+  place-self: start;
+  margin: 0.5lh 0.5ch;
+  padding: 0.5lh 0.5ch;
+  border: 1px solid var(--foreground2);
+  border-radius: 0.5ch;
   white-space: pre;
   line-height: 1.1;
 }
@@ -143,7 +148,11 @@ onMounted(() => {
   display: flex;
   gap: 1ch;
   margin-top: 1lh;
-  color: transparent;
+}
+
+.colours span {
+  width: 3ch;
+  height: 1lh;
 }
 
 .tip {

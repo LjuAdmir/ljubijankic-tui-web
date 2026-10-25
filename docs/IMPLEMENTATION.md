@@ -231,6 +231,7 @@ Aliases: `cat`/`open`/`less` are one command; `neofetch` is an alias of `lifefet
 ### LifeFetch
 
 - Static values (name, location, hardware, …) are a plain object in `LifeFetch.vue`. Agiledrop is a link to `https://agiledrop.com`.
+- The logo uses no box drawing or block glyphs, because Android's only monospace font (Droid Sans Mono) has neither: the frame is a CSS border and the letters are runs of spaces with a solid background, so any monospace font lines it up. The colour swatches are plain `3ch` boxes.
 - Uptime = full years since `1997-03-03`, with 🎂 appended on 3 March. It's computed in `onMounted`, so the prerendered HTML (built on a different day) doesn't cause a hydration mismatch.
 - `lifefetch`, `cd`, `cd ~` and `cd $HOME` all share one `goHome(ctx)` in `commands/lifefetch.ts`: `clear()`, set `cwd` to `~`, then `printComponent('lifefetch')`. Typed commands stay in history even though the screen is cleared. Paths that merely resolve to home (`cd ..`, `cd ~/`) are a plain `cd`.
 - Components go into the output by name (`OutputComponent`), and `OutputLine` maps the name to the component. That keeps the scrollback serialisable for the prerendered state handover.
@@ -312,6 +313,7 @@ Two small functions, no dependency:
   The theme must be imported after all other WebTUI CSS.
 - `useTheme.ts` sets `data-webtui-theme` on `<html>` (`catppuccin-mocha` default for everyone, plus `-macchiato`, `-frappe`, `-latte`) and stores the choice in `tui.theme`. An unknown stored value falls back to mocha.
 - `main.css` overrides latte's `--foreground2` with `--subtext1`: catppuccin's `overlay2` is 3.5:1 on latte's base, under WCAG AA's 4.5:1. The other flavours pass as they are.
+- `main.css` replaces WebTUI's plain `monospace` with a stack of system fonts that have box drawing glyphs (SF Mono/Menlo, Cascadia Mono/Consolas, DejaVu Sans Mono, Noto Sans Mono, then Liberation Mono, which lacks `╭╮╰╯`), with `monospace` last. iOS maps plain `monospace` to Courier, which has none of them. No webfont is shipped.
 - A tiny inline script in `index.html` applies the stored theme before the first paint, so the page never flashes the wrong theme. It repeats the theme list, since it can't import from `src/`.
 - `theme` prints `ThemeList.vue`: each theme (full name, clickable, runs `theme <name>`), the current one marked `*`, and a swatch of that theme's own colours. The swatch carries `data-webtui-theme` itself, so the theme's variables apply inside it without switching the page. The list gets the current theme as a prop, so older lists in the scrollback keep their marker. `theme <name>` switches and confirms with `theme: <name>`; Tab completes the names. The bottom bar's `theme` button (right, before ©) runs `theme` for visitors who don't type: it closes the pager but, unlike the page buttons, keeps the scrollback.
 - Components in the scrollback can take props (`printComponent(name, props)`), stored with the output entry as plain data.

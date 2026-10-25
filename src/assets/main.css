@@ -8,6 +8,13 @@
 
 @import '@webtui/theme-catppuccin';
 
+/* plain monospace is Courier on iOS, which has no box drawing glyphs; Liberation lacks ╭╮╰╯ */
+:root {
+  --font-family:
+    ui-monospace, 'SF Mono', Menlo, 'Cascadia Mono', Consolas, 'DejaVu Sans Mono', 'Noto Sans Mono',
+    'Liberation Mono', monospace;
+}
+
 /* catppuccin's latte muted text is 3.5:1, under the 4.5:1 WCAG AA minimum */
 [data-webtui-theme='catppuccin-latte'] {
   --foreground2: var(--subtext1);
