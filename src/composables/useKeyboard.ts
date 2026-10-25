@@ -4,6 +4,7 @@ import { useTerminalStore } from '@/stores/terminal'
 interface Prompt {
   focus(): void
   search(): void
+  cancel(): void
 }
 
 interface Pager {
@@ -19,12 +20,12 @@ export function useKeyboard(
   let isTouch = false
 
   function onKeydown(event: KeyboardEvent) {
-    // handled here rather than on the input, so the browser never reloads the page
-    if (store.mode === 'shell' && event.ctrlKey && event.key === 'r') {
-      event.preventDefault()
-      return prompt()?.search()
+    if (event.ctrlKey || event.metaKey || event.altKey) {
+      if (store.mode === 'shell' && event.ctrlKey && !event.altKey && !event.metaKey) {
+        onShellShortcut(event)
+      }
+      return
     }
-    if (event.ctrlKey || event.metaKey || event.altKey) return
     if (store.mode === 'pager') return onPagerKey(event)
     if (isTouch || store.mode !== 'shell' || event.key.length !== 1) return
 
@@ -34,6 +35,32 @@ export function useKeyboard(
     if (event.key === ' ' && target.matches('button, a')) return
 
     prompt()?.focus()
+  }
+
+  // handled here rather than on the input, so they work wherever focus is and the browser
+  // doesn't reload or jump to the address bar
+  function onShellShortcut(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'r':
+        prompt()?.search()
+        break
+      case 'l':
+        store.clear()
+        break
+      case 'c':
+        // copying selected text still works
+        if (hasSelection(event.target)) return
+        prompt()?.cancel()
+        break
+      default:
+        return
+    }
+    event.preventDefault()
+  }
+
+  function hasSelection(target: EventTarget | null) {
+    if (target instanceof HTMLInputElement) return target.selectionStart !== target.selectionEnd
+    return !!getSelection()?.toString()
   }
 
   function onPagerKey(event: KeyboardEvent) {

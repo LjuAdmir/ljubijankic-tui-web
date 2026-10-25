@@ -233,10 +233,10 @@ On desktop the page captures the keyboard: typing anywhere goes to the prompt.
 | `Tab` | Complete command or path; on ambiguity, list candidates (clickable), further `Tab`s cycle through them |
 | `↑` / `↓` | Walk through history; with text typed, only commands starting with it |
 | `Ctrl+R` | Fuzzy search through history |
-| `Ctrl+L` | Clear the screen |
-| `Ctrl+C` | Cancel the current line (or stop `matrix` / `sl`). Plain copy still works when text is selected |
+| `Ctrl+L` | Clear the screen (the typed line stays) |
+| `Ctrl+C` | Cancel the current line, shown as `^C` in the scrollback (or stop `matrix` / `sl`, or close the search). Plain copy still works when text is selected |
 | `Ctrl+U` | Clear the line |
-| `Ctrl+A` / `Ctrl+E` | Jump to start / end of line |
+| `Ctrl+A` / `Ctrl+E` | Jump to start / end of line (in the prompt; elsewhere the browser's own shortcuts) |
 | `Esc` | Close pager / search |
 
 - **History**: the last 50 commands, kept in the browser between visits.

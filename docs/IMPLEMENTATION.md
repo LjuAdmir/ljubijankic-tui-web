@@ -246,13 +246,13 @@ Clicking anything calls `execute(command)`. That way typed and clicked commands 
 
 One `keydown` listener on `window`, switching on `store.mode`:
 
-- `shell`: printable keys focus the prompt input (desktop only); handles `Ctrl+R/L/C/U/A/E`. `↑`/`↓` and `Tab` are handled on the input itself in `PromptLine` (`@keydown.up/down/tab`), since they only matter while typing.
+- `shell`: printable keys focus the prompt input (desktop only). `Ctrl+R` (history search), `Ctrl+L` (clear the screen, the typed line stays) and `Ctrl+C` work wherever focus is, so the browser never reloads or jumps to the address bar. `Ctrl+C` echoes the line with `^C` and clears the prompt (or closes the history search), except when text is selected, so copying still works. `↑`/`↓`, `Tab` and `Ctrl+A`/`Ctrl+E`/`Ctrl+U` (start, end, clear line) are handled on the input itself in `PromptLine`, since they only matter while typing; elsewhere `Ctrl+A` still selects the page and `Ctrl+U` still shows the source.
 - `pager`: `q`/`Esc` close, `j`/`k`/`↑`/`↓` one line, `Space`/`PgDn`/`PgUp` one page (minus a line), `g`/`G`/`Home`/`End` top and bottom, `s` share. Scrolling is instant. Keys are ignored with Ctrl/Alt/Meta held, and `Space`/`Enter` on a focused button or link keep their normal behaviour. `FilePager` exposes its scroll container and `TerminalView` passes it to `useKeyboard`. The key hints on the pager's bottom border are hidden on touch devices. The pager body is a normal scroll container (`overflow-y: auto`) and the keys just call `scrollBy`/`scrollTo` on it. Mouse wheel, trackpad and touch therefore work natively; nothing intercepts `wheel` or touch events.
 
 **Scrollbars.** `ScrollArea.vue` wraps the pager body and the scrollback. It hides the native scrollbar and draws a text one instead: a `│` track and a `█` thumb one column wide, sized to the visible part in whole lines, and shown only when the content overflows. The thumb can be dragged, and clicking the track jumps there. Sizes come from the `scroll` event and a `ResizeObserver` on the viewport and its content (images loading, new output). In the pager the track sits on the box's right border, and the bottom border shows the scroll percentage.
 - `program`: any key / `Ctrl+C` stops it.
 
-The prompt is a real `<input>` styled to look like a terminal line. That keeps IME, paste, mobile keyboards and screen readers working. `Ctrl+C` is only taken over when no text is selected.
+The prompt is a real `<input>` styled to look like a terminal line. That keeps IME, paste, mobile keyboards and screen readers working.
 
 Touch devices (`matchMedia('(pointer: coarse)')`) never auto-focus the input.
 
@@ -423,7 +423,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **5.2** `lib/storage.ts` and `useHistory` (cap 50, no consecutive duplicates) with tests; `↑`/`↓` and the `history` command.
 - [x] **5.3** `lib/fuzzy.ts` with tests; "did you mean" for unknown commands.
 - [x] **5.4** `HistorySearch` (`Ctrl+R`).
-- [ ] **5.5** `lib/complete.ts` with tests, wired to `Tab`.
+- [x] **5.5** `lib/complete.ts` with tests, wired to `Tab`.
 - [ ] **5.6** Shortcuts: `Ctrl+L`, `Ctrl+C`, `Ctrl+U`, `Ctrl+A`, `Ctrl+E`.
 - [ ] **5.7** `useTheme`, the `theme` command, and the inline no-flash script in `index.html`.
 - [ ] **5.8** `whoami` and `date`.

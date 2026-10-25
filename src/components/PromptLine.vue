@@ -70,6 +70,22 @@ function complete(event: KeyboardEvent) {
   cycle = { start, candidates, index: -1, shown: store.input }
 }
 
+function clearLine() {
+  store.input = ''
+  history.reset()
+}
+
+function moveCursor(position: number) {
+  inputEl.value?.setSelectionRange(position, position)
+}
+
+// Ctrl+C: like a shell, the abandoned line stays in the scrollback
+function cancel() {
+  if (searching.value) return closeSearch()
+  store.echo(`${store.input}^C`)
+  clearLine()
+}
+
 async function closeSearch(command?: string) {
   if (command !== undefined) store.input = command
   searching.value = false
@@ -80,6 +96,7 @@ async function closeSearch(command?: string) {
 defineExpose({
   focus: () => inputEl.value?.focus(),
   search: () => (searching.value = true),
+  cancel,
 })
 </script>
 
@@ -105,6 +122,9 @@ defineExpose({
       @keydown.up.prevent="walk(history.older(store.input))"
       @keydown.down.prevent="walk(history.newer(store.input))"
       @keydown.tab="complete"
+      @keydown.ctrl.a.exact.prevent="moveCursor(0)"
+      @keydown.ctrl.e.exact.prevent="moveCursor(store.input.length)"
+      @keydown.ctrl.u.exact.prevent="clearLine"
     />
   </form>
 </template>
