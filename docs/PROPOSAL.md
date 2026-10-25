@@ -162,7 +162,7 @@ Every clickable element maps to one of these commands.
 |---|---|
 | Classic gags | `sudo …` (the real sudoers refusal), `rm -rf /` (also `~` and `*`: a fake deletion log of the real files, a short flicker with inverted colours, then "just kidding"; any other `rm` hits a read-only file system), `exit` (fake logout, the prompt comes back on click or any key), `vim` / `vi` / `nvim`, `emacs`, `nano` (a joke line each). Only listed by `help -a` |
 | Toys | `cowsay [text]` (says "Moo." without text; the bubble wraps at 40 columns, narrower on phones), `fortune` (classic Unix-style fortunes), `sl` (the classic steam locomotive crosses the screen once), `matrix` (katakana rain in the theme's green), both in place of the scrollback, stopped by any key, `Ctrl+C` or a click, `neofetch` (alias of `lifefetch`) |
-| Easter eggs | Hidden commands not listed in `help`, `.secrets.md` hidden file, `.ssh/` hidden directory with joke files, Konami code |
+| Easter eggs | Hidden commands, never listed, suggested or completed: `hello` / `hi` (greets back, points to `contact.md`), `ping` (`pong` with a fake latency), `hack` (Hollywood hacking output, then a punchline). `.secrets.md` hidden file, `.ssh/` hidden directory with joke files. Konami code: party mode, the colours cycle through the rainbow for 3 seconds with a "+30 lives" line |
 
 ### Errors
 

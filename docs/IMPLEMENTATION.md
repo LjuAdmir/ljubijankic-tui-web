@@ -74,6 +74,7 @@ src/
     site.ts               # site name and URL, for meta tags
     cowsay.ts             # speech bubble + cow
     motion.ts             # prefers-reduced-motion check
+    sleep.ts              # promise timeout, for paced output and effects
   App.vue
   main.ts
 ```
@@ -196,7 +197,7 @@ interface CommandContext {
   open(file: FileEntry): void                                  // pager
   startProgram(name: Program): void                            // full-screen programs: sl, matrix
   clear(): void
-  glitch(): Promise<void>                                      // the rm -rf flicker
+  effect(name: Effect): Promise<void>                          // short screen effects: 'glitch' (rm -rf), 'party' (Konami)
   disconnect(): void                                           // exit: hides the prompt until the next command
 }
 ```
@@ -258,6 +259,7 @@ One `keydown` listener on `window`, switching on `store.mode`:
 - `pager`: `q`/`Esc` close, `j`/`k`/`↑`/`↓` one line, `Space`/`PgDn`/`PgUp` one page (minus a line), `g`/`G`/`Home`/`End` top and bottom, `s` share. Scrolling is instant. Keys are ignored with Ctrl/Alt/Meta held, and `Space`/`Enter` on a focused button or link keep their normal behaviour. `FilePager` exposes its scroll container and `TerminalView` passes it to `useKeyboard`. The key hints on the pager's bottom border are hidden on touch devices. The pager body is a normal scroll container (`overflow-y: auto`) and the keys just call `scrollBy`/`scrollTo` on it. Mouse wheel, trackpad and touch therefore work natively; nothing intercepts `wheel` or touch events.
 
 **Scrollbars.** `ScrollArea.vue` wraps the pager body and the scrollback. It hides the native scrollbar and draws a text one instead: a `│` track and a `█` thumb one column wide, sized to the visible part in whole lines, and shown only when the content overflows. The thumb can be dragged, and clicking the track jumps there. Sizes come from the `scroll` event and a `ResizeObserver` on the viewport and its content (images loading, new output). In the pager the track sits on the box's right border, and the bottom border shows the scroll percentage.
+- Konami code (`↑↑↓↓←→←→BA`): tracked on every key in every mode, also while typing (the arrows still walk history on the way). On the final `A` it isn't typed, the prompt is cleared, an accent line "Konami code accepted. +30 lives." is printed and the terminal plays the `party` effect: colours cycle through the rainbow (`hue-rotate`) three times in 3s. With reduce motion on, only the line.
 - `program`: any key (except a lone modifier) or `Ctrl+C` stops it, and so does a click or tap on it. Any command (from the bottom bar) stops it too. The program takes the scrollback's place, the prompt is hidden, the bottom bar stays; the prompt gets focus back on desktop when it ends. `sl` ends by itself once the train has left. With reduce motion on, `sl` and `matrix` print a line instead (`lib/motion.ts`, also used by the `rm -rf` log).
 
 The prompt is a real `<input>` styled to look like a terminal line. That keeps IME, paste, mobile keyboards and screen readers working.
@@ -445,9 +447,8 @@ Each milestone ends with something runnable. Each milestone is split into small 
 
 - [x] **6.1** Gags: `sudo`, `rm -rf /`, `exit`, `vim`/`emacs`.
 - [x] **6.2** Toys: `cowsay`, `fortune`.
-- [ ] **6.3** Programs: `program` mode, `sl` and `matrix` (any key or `Ctrl+C` stops them; reduced motion respected).
-- [ ] **6.4** Hidden commands and the Konami code.
-  > **Decision needed:** which hidden commands, and what the Konami code does.
+- [x] **6.3** Programs: `program` mode, `sl` and `matrix` (any key or `Ctrl+C` stops them; reduced motion respected).
+- [ ] **6.4** Hidden commands (`hello`/`hi`, `ping`, `hack`) and the Konami code (party mode).
 - [ ] **6.5** `.secrets.md` and `.ssh/` (`norton.jpg`, `id_rsa`, `id_rsa.pub`, `known_hosts`).
   > **Decision needed:** the contents of `.secrets.md` and the friends' links for `known_hosts`.
 - [ ] **6.6** Mobile click-first pass.

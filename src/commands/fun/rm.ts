@@ -1,6 +1,7 @@
 import { list, root, type Entry } from '@/lib/fs'
 import { hasFlag } from '@/lib/parse'
 import { prefersReducedMotion } from '@/lib/motion'
+import { sleep } from '@/lib/sleep'
 import type { Command, Line } from '../types'
 
 const targets = ['/', '~', '*']
@@ -10,8 +11,6 @@ function removed(entry: Entry): string[] {
   if (entry.kind === 'file') return [`removed '${entry.path}'`]
   return [...list(entry, { all: true }).flatMap(removed), `removed directory '${entry.path}'`]
 }
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export default {
   name: 'rm',
@@ -40,7 +39,7 @@ export default {
       ctx.print([{ text: line }])
       if (!instant) await sleep(80)
     }
-    await ctx.glitch()
+    await ctx.effect('glitch')
     ctx.print([], [{ text: "Just kidding. Everything's still here." }])
   },
 } satisfies Command

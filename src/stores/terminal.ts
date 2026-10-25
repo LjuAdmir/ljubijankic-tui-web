@@ -1,9 +1,10 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { parse } from '@/lib/parse'
+import { sleep } from '@/lib/sleep'
 import { findCommand, suggestCommand } from '@/commands'
 import type { FileEntry } from '@/lib/fs'
-import type { CommandContext, Line, OutputComponent, Program } from '@/commands/types'
+import type { CommandContext, Effect, Line, OutputComponent, Program } from '@/commands/types'
 
 export type OutputEntry =
   | { id: number; kind: 'prompt'; cwd: string; input: string }
@@ -19,7 +20,7 @@ export const useTerminalStore = defineStore('terminal', () => {
   const program = ref<Program | null>(null)
   // the prompt's text, here so output lines (completion candidates) can fill it
   const input = ref('')
-  const glitching = ref(false)
+  const effect = ref<Effect | null>(null)
   // false after `exit`, which hides the prompt until the next command
   const connected = ref(true)
 
@@ -38,10 +39,13 @@ export const useTerminalStore = defineStore('terminal', () => {
     output.value = []
   }
 
-  async function glitch() {
-    glitching.value = true
-    await new Promise((resolve) => setTimeout(resolve, 1200))
-    glitching.value = false
+  // the lengths of the CSS animations in TerminalView
+  const durations: Record<Effect, number> = { glitch: 1200, party: 3000 }
+
+  async function playEffect(name: Effect) {
+    effect.value = name
+    await sleep(durations[name])
+    effect.value = null
   }
 
   function disconnect() {
@@ -113,7 +117,7 @@ export const useTerminalStore = defineStore('terminal', () => {
       startProgram,
       open,
       clear,
-      glitch,
+      effect: playEffect,
       disconnect,
     }
     await command.run(args, ctx)
@@ -127,7 +131,7 @@ export const useTerminalStore = defineStore('terminal', () => {
     openFile,
     program,
     input,
-    glitching,
+    effect,
     connected,
     execute,
     echo,
@@ -135,5 +139,6 @@ export const useTerminalStore = defineStore('terminal', () => {
     clear,
     closeFile,
     stopProgram,
+    playEffect,
   }
 })

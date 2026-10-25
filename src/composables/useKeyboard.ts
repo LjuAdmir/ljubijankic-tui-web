@@ -1,5 +1,20 @@
 import { nextTick, onMounted, onUnmounted, watch } from 'vue'
 import { useTerminalStore } from '@/stores/terminal'
+import { prefersReducedMotion } from '@/lib/motion'
+
+const konami = [
+  'ArrowUp',
+  'ArrowUp',
+  'ArrowDown',
+  'ArrowDown',
+  'ArrowLeft',
+  'ArrowRight',
+  'ArrowLeft',
+  'ArrowRight',
+  'b',
+  'a',
+].join()
+const modifiers = ['Shift', 'Control', 'Alt', 'Meta']
 
 interface Prompt {
   focus(): void
@@ -18,8 +33,10 @@ export function useKeyboard(
 ) {
   const store = useTerminalStore()
   let isTouch = false
+  let recent: string[] = []
 
   function onKeydown(event: KeyboardEvent) {
+    if (isKonami(event)) return party(event)
     if (store.mode === 'program') return onProgramKey(event)
     if (!store.connected) return onDisconnectedKey(event)
     if (event.ctrlKey || event.metaKey || event.altKey) {
@@ -39,8 +56,24 @@ export function useKeyboard(
     prompt()?.focus()
   }
 
+  // works everywhere, also while typing: the arrows still walk history on the way
+  function isKonami(event: KeyboardEvent) {
+    if (modifiers.includes(event.key)) return false
+    recent = [...recent, event.key.length === 1 ? event.key.toLowerCase() : event.key].slice(-10)
+    return recent.join() === konami
+  }
+
+  function party(event: KeyboardEvent) {
+    // the final A isn't typed, and the B and history entry the code left behind are cleared
+    event.preventDefault()
+    recent = []
+    store.input = ''
+    store.print([{ text: 'Konami code accepted. +30 lives.', style: 'accent' }])
+    if (!prefersReducedMotion()) store.playEffect('party')
+  }
+
   function onProgramKey(event: KeyboardEvent) {
-    if (['Shift', 'Control', 'Alt', 'Meta'].includes(event.key)) return
+    if (modifiers.includes(event.key)) return
     store.stopProgram()
     // the key only stops the program; browser shortcuts with Alt or Meta still work
     if (!event.altKey && !event.metaKey) event.preventDefault()

@@ -36,7 +36,7 @@ watch(
 </script>
 
 <template>
-  <div :class="['terminal', { glitch: store.glitching }]">
+  <div :class="['terminal', store.effect]">
     <!-- FilePager awaits its page, so prerendering and hydration include the content -->
     <Suspense>
       <FilePager
@@ -115,6 +115,20 @@ watch(
   }
   84% {
     filter: none;
+  }
+}
+
+/* the Konami code */
+.party {
+  animation: party 1s linear 3;
+}
+
+@keyframes party {
+  from {
+    filter: saturate(3) hue-rotate(0deg);
+  }
+  to {
+    filter: saturate(3) hue-rotate(360deg);
   }
 }
 

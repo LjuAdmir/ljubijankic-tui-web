@@ -16,6 +16,9 @@ export type OutputComponent = 'lifefetch' | 'themes' | 'cowsay'
 // full-screen programs, they take the scrollback's place until a key stops them
 export type Program = 'sl' | 'matrix'
 
+// short full-screen animations: the rm -rf flicker, the Konami code
+export type Effect = 'glitch' | 'party'
+
 export interface CommandContext {
   cwd: string
   cd(path: string): void
@@ -24,7 +27,7 @@ export interface CommandContext {
   startProgram(name: Program): void
   open(file: FileEntry): void
   clear(): void
-  glitch(): Promise<void>
+  effect(name: Effect): Promise<void>
   disconnect(): void
 }
 
