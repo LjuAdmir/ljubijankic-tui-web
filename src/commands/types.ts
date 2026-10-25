@@ -3,7 +3,8 @@ import type { FileEntry } from '@/lib/fs'
 type Style = 'dir' | 'file' | 'error' | 'muted' | 'accent'
 
 export type Segment =
-  | { text: string; style?: Style; hang?: boolean } // hang: wrapped lines continue under it
+  // hang: wrapped lines continue under it; decorative: hidden from screen readers
+  | { text: string; style?: Style; hang?: boolean; decorative?: boolean }
   | { text: string; command: string | string[]; href?: string; style?: Style }
   | { text: string; href: string }
   | { text: string; fill: string; style?: Style } // clickable, puts the text in the prompt

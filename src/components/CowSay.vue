@@ -23,7 +23,7 @@ onUnmounted(() => observer?.disconnect())
 </script>
 
 <template>
-  <div ref="root" class="cowsay">
+  <div ref="root" class="cowsay" role="img" :aria-label="`A cow says: ${text}`">
     <span ref="probe" class="probe" aria-hidden="true">0</span>{{ lines.join('\n') }}
   </div>
 </template>

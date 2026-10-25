@@ -264,8 +264,11 @@ On desktop the page captures the keyboard: typing anywhere goes to the prompt.
 ## 12. Accessibility and SEO
 
 - File pages are pre-generated with a proper title, description, and preview image from their metadata.
-- Clickable entries are real links where they lead to a file, so they work with screen readers, middle-click and "copy link".
-- New output is announced to screen readers.
+- Clickable entries are real links where they have a URL (files, directories, the bottom bar's pages), so they work with screen readers, middle-click and "copy link".
+- Each command's output is announced to screen readers; the echoed command line isn't, since the visitor just typed or clicked it. ASCII art is described instead (cowsay, lifefetch) or skipped (tree lines).
+- Opening a file moves focus into the pager, which is labelled with the file's path; closing it returns focus to what opened it.
+- The page has a `main` landmark (the terminal) and a `nav` (bottom bar). Links show a focus outline.
+- Muted text meets WCAG AA contrast in every theme (latte uses a darker muted colour than catppuccin's default).
 - Animations respect the "reduce motion" system setting: `sl` and `matrix` politely decline, `rm -rf /` prints its log at once and inverts without flickering.
 
 ## 13. Open items

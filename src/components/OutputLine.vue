@@ -75,7 +75,13 @@ const single = computed(
           {{ segment.text }}
         </button>
         <a v-else-if="'href' in segment" :href="segment.href">{{ segment.text }}</a>
-        <span v-else :class="segment.style">{{ segment.text }}</span>
+        <span
+          v-else
+          :class="segment.style"
+          :aria-hidden="'decorative' in segment && segment.decorative ? 'true' : undefined"
+        >
+          {{ segment.text }}
+        </span>
       </template>
     </template>
   </div>

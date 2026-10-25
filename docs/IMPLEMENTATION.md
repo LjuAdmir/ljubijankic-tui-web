@@ -48,6 +48,7 @@ src/
     ScrollArea.vue        # scroll container with a text scrollbar (pager, scrollback)
     LifeFetch.vue
     HistorySearch.vue     # Ctrl+R overlay
+    OutputAnnouncer.vue   # visually hidden live region: the last command's output as text
     CowSay.vue            # cowsay output, bubble fits the screen width
     SlTrain.vue           # sl program: the D51 from sl, text frames every 40ms
     MatrixRain.vue        # matrix program: canvas, theme green, katakana
@@ -209,7 +210,7 @@ Commands never touch the DOM. They print **lines made of segments**, and `Output
 ```ts
 type Style = 'dir' | 'file' | 'error' | 'muted' | 'accent'
 type Segment =
-  | { text: string; style?: Style; hang?: boolean }                 // hang: wrapped lines continue under it
+  | { text: string; style?: Style; hang?: boolean; decorative?: boolean }   // hang: wrapped lines continue under it; decorative: aria-hidden (tree lines)
   | { text: string; command: string | string[]; style?: Style }   // clickable, runs the command(s) in order
   | { text: string; href: string }      // real link (files)
   | { text: string; fill: string; style?: Style }    // clickable, puts the text in the prompt (Tab candidates)
@@ -309,6 +310,7 @@ Two small functions, no dependency:
 
   The theme must be imported after all other WebTUI CSS.
 - `useTheme.ts` sets `data-webtui-theme` on `<html>` (`catppuccin-mocha` default for everyone, plus `-macchiato`, `-frappe`, `-latte`) and stores the choice in `tui.theme`. An unknown stored value falls back to mocha.
+- `main.css` overrides latte's `--foreground2` with `--subtext1`: catppuccin's `overlay2` is 3.5:1 on latte's base, under WCAG AA's 4.5:1. The other flavours pass as they are.
 - A tiny inline script in `index.html` applies the stored theme before the first paint, so the page never flashes the wrong theme. It repeats the theme list, since it can't import from `src/`.
 - `theme` prints `ThemeList.vue`: each theme (full name, clickable, runs `theme <name>`), the current one marked `*`, and a swatch of that theme's own colours. The swatch carries `data-webtui-theme` itself, so the theme's variables apply inside it without switching the page. The list gets the current theme as a prop, so older lists in the scrollback keep their marker. `theme <name>` switches and confirms with `theme: <name>`; Tab completes the names. The bottom bar's `theme` button (right, before ©) runs `theme` for visitors who don't type: it closes the pager but, unlike the page buttons, keeps the scrollback.
 - Components in the scrollback can take props (`printComponent(name, props)`), stored with the output entry as plain data.
@@ -452,8 +454,8 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **6.3** Programs: `program` mode, `sl` and `matrix` (any key or `Ctrl+C` stops them; reduced motion respected).
 - [x] **6.4** Hidden commands (`hello`/`hi`, `ping`, `hack`) and the Konami code (party mode).
 - [x] **6.5** `.secrets.md` (an easter egg checklist with hints) and `.ssh/` (`norton.jpg`, `id_rsa`, `id_rsa.pub`, `known_hosts` as a commented list of friends' sites). The `rm -rf /` log lists them too.
-- [ ] **6.6** Mobile click-first pass: wrapping at spaces, hanging indents for column output, two-row bottom bar without ©, full-width tap targets on touch, `interactive-widget=resizes-content`.
-- [ ] **6.7** Accessibility pass (`aria-live`, focus handling, real links, reduced motion).
+- [x] **6.6** Mobile click-first pass: wrapping at spaces, hanging indents for column output, two-row bottom bar without ©, full-width tap targets on touch, `interactive-widget=resizes-content`.
+- [ ] **6.7** Accessibility pass: `OutputAnnouncer` reads each command's output (not the echoed prompt), pager focus in and back out, directories and bottom-bar pages as real links, `main` landmark, link focus outline, darker muted text in latte, tree lines hidden and cowsay described for screen readers.
 
 ## 11. Command → file map
 

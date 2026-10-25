@@ -125,8 +125,8 @@ export function loadPage(file: FileEntry): Promise<Component | string> {
   return (pages[file.source] ?? texts[file.source])!()
 }
 
-export function urlFor(file: FileEntry): string {
-  return file.path.replace(/^~/, '').replace(/\.md$/, '')
+export function urlFor(entry: Entry): string {
+  return entry.path.replace(/^~/, '').replace(/\.md$/, '')
 }
 
 export function fromUrl(url: string, from: DirEntry = root): Entry | null {

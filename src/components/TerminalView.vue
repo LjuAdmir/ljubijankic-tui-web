@@ -7,6 +7,7 @@ import PromptLine from './PromptLine.vue'
 import BottomBar from './BottomBar.vue'
 import FilePager from './FilePager.vue'
 import ScrollArea from './ScrollArea.vue'
+import OutputAnnouncer from './OutputAnnouncer.vue'
 import SlTrain from './SlTrain.vue'
 import MatrixRain from './MatrixRain.vue'
 import type { Program } from '@/commands/types'
@@ -37,23 +38,26 @@ watch(
 
 <template>
   <div :class="['terminal', store.effect]">
-    <!-- FilePager awaits its page, so prerendering and hydration include the content -->
-    <Suspense>
-      <FilePager
-        v-if="store.openFile"
-        ref="pager"
-        :key="store.openFile.path"
-        :file="store.openFile"
-      />
-    </Suspense>
-    <div v-if="store.program" class="program" @click="store.stopProgram()">
-      <component :is="programs[store.program]" @exit="store.stopProgram()" />
-    </div>
-    <!-- v-show keeps the scroll position while a file or program is open -->
-    <ScrollArea v-show="shell" ref="scrollback" class="scrollback">
-      <OutputLine v-for="entry in store.output" :key="entry.id" :entry="entry" />
-    </ScrollArea>
-    <PromptLine v-show="shell && store.connected" ref="prompt" />
+    <main class="screen">
+      <!-- FilePager awaits its page, so prerendering and hydration include the content -->
+      <Suspense>
+        <FilePager
+          v-if="store.openFile"
+          ref="pager"
+          :key="store.openFile.path"
+          :file="store.openFile"
+        />
+      </Suspense>
+      <div v-if="store.program" class="program" @click="store.stopProgram()">
+        <component :is="programs[store.program]" @exit="store.stopProgram()" />
+      </div>
+      <!-- v-show keeps the scroll position while a file or program is open -->
+      <ScrollArea v-show="shell" ref="scrollback" class="scrollback">
+        <OutputLine v-for="entry in store.output" :key="entry.id" :entry="entry" />
+      </ScrollArea>
+      <PromptLine v-show="shell && store.connected" ref="prompt" />
+      <OutputAnnouncer />
+    </main>
     <BottomBar />
   </div>
 </template>
@@ -63,6 +67,13 @@ watch(
   display: flex;
   flex-direction: column;
   height: 100dvh;
+}
+
+.screen {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .scrollback {

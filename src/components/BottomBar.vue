@@ -3,10 +3,10 @@ import { withBase } from '@/lib/site'
 import { useTerminalStore } from '@/stores/terminal'
 
 const links = [
-  { label: 'home', command: 'cd ~' },
+  { label: 'home', command: 'cd ~', href: withBase('/') },
   { label: 'about me', command: 'open ~/about.md', href: withBase('/about') },
-  { label: 'projects', command: ['cd ~/projects', 'ls'] },
-  { label: 'articles', command: ['cd ~/articles', 'ls'] },
+  { label: 'projects', command: ['cd ~/projects', 'ls'], href: withBase('/projects') },
+  { label: 'articles', command: ['cd ~/articles', 'ls'], href: withBase('/articles') },
   { label: 'contact', command: 'open ~/contact.md', href: withBase('/contact') },
 ]
 const year = new Date().getFullYear()
@@ -29,21 +29,17 @@ function showThemes() {
 <template>
   <footer class="bottom-bar">
     <nav>
-      <template v-for="link in links" :key="link.label">
-        <a
-          v-if="link.href"
-          :href="link.href"
-          is-="button"
-          size-="small"
-          variant-="background1"
-          @click.exact.prevent="go(link.command)"
-        >
-          {{ link.label }}
-        </a>
-        <button v-else type="button" size-="small" variant-="background1" @click="go(link.command)">
-          {{ link.label }}
-        </button>
-      </template>
+      <a
+        v-for="link in links"
+        :key="link.label"
+        :href="link.href"
+        is-="button"
+        size-="small"
+        variant-="background1"
+        @click.exact.prevent="go(link.command)"
+      >
+        {{ link.label }}
+      </a>
     </nav>
     <div class="end">
       <button type="button" size-="small" variant-="background1" @click="showThemes">theme</button>

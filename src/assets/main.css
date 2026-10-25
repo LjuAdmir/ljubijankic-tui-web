@@ -7,3 +7,13 @@
 @import '@webtui/css/components/typography.css';
 
 @import '@webtui/theme-catppuccin';
+
+/* catppuccin's latte muted text is 3.5:1, under the 4.5:1 WCAG AA minimum */
+[data-webtui-theme='catppuccin-latte'] {
+  --foreground2: var(--subtext1);
+}
+
+/* WebTUI removes every outline; button-styled links have their own focus style */
+a:not([is-~='button']):focus-visible {
+  outline: 1px solid var(--foreground0);
+}

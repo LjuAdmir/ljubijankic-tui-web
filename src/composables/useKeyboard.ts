@@ -79,13 +79,14 @@ export function useKeyboard(
     if (!event.altKey && !event.metaKey) event.preventDefault()
   }
 
-  // the prompt was hidden while the program ran, so it lost focus
+  // the prompt was hidden while a program or file was open, so it lost focus. A file hands
+  // focus back to what opened it first, so the prompt only gets it when nothing else did
   watch(
     () => store.mode,
     async (_, previous) => {
-      if (previous !== 'program' || isTouch) return
+      if (previous === 'shell' || isTouch) return
       await nextTick()
-      prompt()?.focus()
+      if (previous === 'program' || document.activeElement === document.body) prompt()?.focus()
     },
   )
 

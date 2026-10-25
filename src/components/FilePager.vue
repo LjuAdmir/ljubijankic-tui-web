@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, useTemplateRef } from 'vue'
+import { computed, nextTick, onMounted, onUnmounted, ref, useId, useTemplateRef } from 'vue'
 import { useHead, useSeoMeta } from '@unhead/vue'
 import { loadPage, urlFor, type FileEntry } from '@/lib/fs'
 import { share } from '@/lib/share'
@@ -11,6 +11,8 @@ const props = defineProps<{ file: FileEntry }>()
 
 const store = useTerminalStore()
 const area = useTemplateRef('area')
+const pager = useTemplateRef('pager')
+const titleId = useId()
 
 const { title = props.file.name, description, image } = props.file.meta
 const fullTitle = `${title} · ${siteName}`
@@ -45,14 +47,35 @@ const details = computed(() => {
   return [date?.slice(0, 10), tags.map((tag) => `#${tag}`).join(' ')].filter(Boolean).join(' · ')
 })
 
+// screen readers start reading the file; closing returns focus to whatever opened it
+let opener: Element | null = null
+onMounted(() => {
+  opener = document.activeElement
+  pager.value?.focus({ preventScroll: true })
+})
+onUnmounted(() => {
+  // after the next render, once the scrollback and prompt are visible again
+  if (opener instanceof HTMLElement && opener !== document.body) {
+    const element = opener
+    nextTick(() => element.isConnected && element.focus({ preventScroll: true }))
+  }
+})
+
 // odd indexes are the links
 const textParts = typeof page === 'string' ? page.split(/(https?:\/\/\S+)/) : []
 </script>
 
 <template>
-  <article class="file-pager" box-="square" shear-="both">
+  <article
+    ref="pager"
+    class="file-pager"
+    box-="square"
+    shear-="both"
+    tabindex="-1"
+    :aria-labelledby="titleId"
+  >
     <header>
-      <span>{{ file.path }}</span>
+      <span :id="titleId">{{ file.path }}</span>
       <span v-if="details">{{ details }}</span>
     </header>
     <ScrollArea ref="area" class="body">

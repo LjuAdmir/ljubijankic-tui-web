@@ -49,7 +49,7 @@ export default {
         const description = entry.meta.description
         const padding = description ? ' '.repeat(width - prefix.length - label.length + 2) : ''
         return [
-          { text: prefix, style: 'muted' },
+          { text: prefix, style: 'muted', decorative: true },
           entrySegment(entry, label),
           { text: padding },
           { text: description ?? '', style: 'muted', hang: true },
