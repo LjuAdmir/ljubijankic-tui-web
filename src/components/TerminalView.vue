@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTemplateRef, watch } from 'vue'
+import { nextTick, useTemplateRef, watch } from 'vue'
 import { useTerminalStore } from '@/stores/terminal'
 import { useKeyboard } from '@/composables/useKeyboard'
 import OutputLine from './OutputLine.vue'
@@ -18,9 +18,13 @@ useKeyboard(
   () => pager.value,
 )
 
+// also when the pager closes: lines printed while it was open couldn't scroll a hidden scrollback
 watch(
-  () => store.output.at(-1)?.id,
-  () => scrollback.value?.viewport?.scrollTo({ top: scrollback.value.viewport.scrollHeight }),
+  () => (store.openFile ? null : store.output.at(-1)?.id),
+  async () => {
+    await nextTick()
+    scrollback.value?.viewport?.scrollTo({ top: scrollback.value.viewport.scrollHeight })
+  },
   { flush: 'post' },
 )
 </script>

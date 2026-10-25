@@ -186,7 +186,7 @@ interface CommandContext {
   cwd: string
   cd(path: string): void
   print(...lines: Line[]): void
-  printComponent(name: OutputComponent): void                  // lifefetch, cowsay, …
+  printComponent(name: OutputComponent, props?: object): void   // lifefetch, themes, cowsay, …
   open(file: FileEntry): void                                  // pager
   run(component: Component): void                              // full-screen programs: matrix, sl
   clear(): void
@@ -296,8 +296,10 @@ Two small functions, no dependency:
   ```
 
   The theme must be imported after all other WebTUI CSS.
-- `useTheme.ts` sets `data-webtui-theme` on `<html>` (`catppuccin-mocha` default, plus `-macchiato`, `-frappe`, `-latte`) and stores the choice in `tui.theme`.
-- A tiny inline script in `index.html` applies the stored theme before the app mounts, so the page never flashes the wrong theme.
+- `useTheme.ts` sets `data-webtui-theme` on `<html>` (`catppuccin-mocha` default for everyone, plus `-macchiato`, `-frappe`, `-latte`) and stores the choice in `tui.theme`. An unknown stored value falls back to mocha.
+- A tiny inline script in `index.html` applies the stored theme before the first paint, so the page never flashes the wrong theme. It repeats the theme list, since it can't import from `src/`.
+- `theme` prints `ThemeList.vue`: each theme (full name, clickable, runs `theme <name>`), the current one marked `*`, and a swatch of that theme's own colours. The swatch carries `data-webtui-theme` itself, so the theme's variables apply inside it without switching the page. The list gets the current theme as a prop, so older lists in the scrollback keep their marker. `theme <name>` switches and confirms with `theme: <name>`; Tab completes the names. The bottom bar's `theme` button (right, before ©) runs `theme` for visitors who don't type: it closes the pager but, unlike the page buttons, keeps the scrollback.
+- Components in the scrollback can take props (`printComponent(name, props)`), stored with the output entry as plain data.
 
 ## 7. Routing, prerendering and sharing
 
@@ -345,7 +347,7 @@ GitHub Pages serves `404.html` for any path without a file, including directory 
 
 ## 8. Testing
 
-Vitest, on `src/lib/`, `useHistory` and the command registry:
+Vitest, on `src/lib/`, `useHistory`, `useTheme` and the command registry:
 
 - `share.ts`: clipboard on desktop, share sheet on touch, cancelled sheet, blocked clipboard.
 - `fs.ts`: `resolve` with `~`, `$HOME`, `..` past root, `.`, trailing slashes, relative vs absolute, hidden entries, files vs dirs, `index.md` not listed, plain text files present, `name` override resolves by display name; `urlFor` / `fromUrl` round trip.
@@ -356,6 +358,7 @@ Vitest, on `src/lib/`, `useHistory` and the command registry:
 - `commands/index.ts`: `suggestCommand` prefers names over aliases, skips unrelated input.
 - `storage.ts`: JSON round trip, missing key, invalid JSON, blocked storage.
 - `useHistory`: cap of 50, de-duplication, persistence and loading, clear, prefix walk with draft restore, each command once.
+- `useTheme`: mocha default, apply and save, unknown saved theme ignored.
 
 No component tests in v1; UI is checked by hand in the browser.
 
@@ -424,7 +427,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **5.3** `lib/fuzzy.ts` with tests; "did you mean" for unknown commands.
 - [x] **5.4** `HistorySearch` (`Ctrl+R`).
 - [x] **5.5** `lib/complete.ts` with tests, wired to `Tab`.
-- [ ] **5.6** Shortcuts: `Ctrl+L`, `Ctrl+C`, `Ctrl+U`, `Ctrl+A`, `Ctrl+E`.
+- [x] **5.6** Shortcuts: `Ctrl+L`, `Ctrl+C`, `Ctrl+U`, `Ctrl+A`, `Ctrl+E`.
 - [ ] **5.7** `useTheme`, the `theme` command, and the inline no-flash script in `index.html`.
 - [ ] **5.8** `whoami` and `date`.
 

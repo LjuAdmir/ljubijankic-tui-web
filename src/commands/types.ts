@@ -11,13 +11,13 @@ export type Segment =
 export type Line = Segment[]
 
 // components are stored by name, so the output stays serialisable for the prerendered state
-export type OutputComponent = 'lifefetch'
+export type OutputComponent = 'lifefetch' | 'themes'
 
 export interface CommandContext {
   cwd: string
   cd(path: string): void
   print(...lines: Line[]): void
-  printComponent(name: OutputComponent): void
+  printComponent(name: OutputComponent, props?: Record<string, unknown>): void
   open(file: FileEntry): void
   clear(): void
 }

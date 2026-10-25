@@ -18,6 +18,12 @@ function go(command: string | string[]) {
   store.clear()
   store.execute(command)
 }
+
+// keeps the scrollback, the theme list is added below it
+function showThemes() {
+  store.closeFile()
+  store.execute('theme')
+}
 </script>
 
 <template>
@@ -39,7 +45,10 @@ function go(command: string | string[]) {
         </button>
       </template>
     </nav>
-    <span class="copyright">© Ljubijankic {{ year }}</span>
+    <div class="end">
+      <button type="button" size-="small" variant-="background1" @click="showThemes">theme</button>
+      <span class="copyright">© Ljubijankic {{ year }}</span>
+    </div>
   </footer>
 </template>
 
@@ -53,9 +62,11 @@ function go(command: string | string[]) {
   padding: 0 1ch;
 }
 
-nav {
+nav,
+.end {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: 1ch;
 }
 

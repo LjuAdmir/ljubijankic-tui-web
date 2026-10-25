@@ -8,7 +8,7 @@ import type { CommandContext, Line, OutputComponent } from '@/commands/types'
 export type OutputEntry =
   | { id: number; kind: 'prompt'; cwd: string; input: string }
   | { id: number; kind: 'line'; line: Line }
-  | { id: number; kind: 'component'; name: OutputComponent }
+  | { id: number; kind: 'component'; name: OutputComponent; props?: Record<string, unknown> }
 
 export const useTerminalStore = defineStore('terminal', () => {
   const cwd = ref('~')
@@ -26,8 +26,8 @@ export const useTerminalStore = defineStore('terminal', () => {
     for (const line of lines) output.value.push({ id: nextId(), kind: 'line', line })
   }
 
-  function printComponent(name: OutputComponent) {
-    output.value.push({ id: nextId(), kind: 'component', name })
+  function printComponent(name: OutputComponent, props?: Record<string, unknown>) {
+    output.value.push({ id: nextId(), kind: 'component', name, props })
   }
 
   function clear() {

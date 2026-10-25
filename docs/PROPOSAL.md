@@ -38,13 +38,13 @@ The screen has three fixed regions:
 ├──────────────────────────────────────────────────────────────────────┤
 │  visitor@ljubijankic ~/projects > ▌                                  │  ← prompt (always here)
 ├──────────────────────────────────────────────────────────────────────┤
-│  [home] [about me] [projects] [articles] [contact]  © Ljubijankic 2026 │  ← bottom bar
+│  [home] [about me] [projects] [articles] [contact]   [theme] © 2026  │  ← bottom bar
 └──────────────────────────────────────────────────────────────────────┘
 ```
 
-- **Scrollback**: output of every command run so far, auto-scrolls to the newest line.
+- **Scrollback**: output of every command run so far, auto-scrolls to the newest line (also when the pager closes).
 - **Prompt**: `visitor@ljubijankic <path> >`, always at the bottom, above the bottom bar. The path part (`~/projects`) is a clickable breadcrumb.
-- **Bottom bar**: shortcuts to the main pages on the left, `© Ljubijankic 2026` on the right.
+- **Bottom bar**: shortcuts to the main pages on the left; a `[theme]` button and `© Ljubijankic 2026` on the right.
 
 ## 3. Lifefetch (home screen)
 
@@ -208,6 +208,7 @@ Opening a file switches the output area into a full-screen reader, like `less`:
 | Bottom bar `[projects]` | `cd ~/projects` then `ls` |
 | Bottom bar `[articles]` | `cd ~/articles` then `ls` |
 | Bottom bar `[contact]` | `open ~/contact.md` |
+| Bottom bar `[theme]` | `theme` (keeps the scrollback, closes the pager) |
 | Pager `[close]` / `[share]` | `q` / `share` |
 
 Clicking always echoes the command into the scrollback as if it had been typed.
@@ -253,7 +254,7 @@ On desktop the page captures the keyboard: typing anywhere goes to the prompt.
 ## 11. Themes
 
 - Default: Catppuccin (Mocha).
-- `theme` lists the available themes; `theme <name>` switches. The choice is saved in the browser (localStorage) and remembered between visits.
+- `theme` lists the available themes with a colour swatch each (click one to switch); `theme <name>` switches, using the full name (`theme catppuccin-latte`). The choice is saved in the browser (localStorage) and remembered between visits. Everyone starts on mocha.
 - Available in v1: Catppuccin flavours `mocha`, `macchiato`, `frappe`, `latte`. More themes may come later.
 
 ## 12. Accessibility and SEO
