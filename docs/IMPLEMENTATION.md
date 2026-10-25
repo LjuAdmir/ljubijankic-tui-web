@@ -382,7 +382,7 @@ No component tests in v1; UI is checked by hand in the browser.
 ## 9. Build and deploy
 
 - `npm run build` type-checks, runs `vite-ssg build`, then copies `index.html` → `404.html`.
-- `.github/workflows/deploy.yml`: checkout → setup node 24 → `configure-pages` → `npm ci` → oxlint and ESLint (no `--fix`) → `vitest run` → build → `upload-pages-artifact` → `deploy-pages`. It runs by hand from the Actions tab for now; switch the trigger to push on `main` once the domain points here.
+- `.github/workflows/deploy.yml`: checkout → setup node 24 → `configure-pages` → `npm ci` → oxlint and ESLint (no `--fix`) → `vitest run` → build → `upload-pages-artifact` → `deploy-pages`. It runs on every push to `main`, and by hand from the Actions tab.
 - `upload-pages-artifact` skips dotfiles unless `include-hidden-files: true`, which is needed for dotfile pages like `.secrets.html`.
 - **Base path.** Until the domain moves, GitHub serves the site at `<user>.github.io/<repo>/`. The workflow passes `configure-pages`' `base_path` as `BASE_PATH`, which becomes Vite's `base` and the router's base. Routes and `urlFor` never include it; `withBase` in `lib/site.ts` adds it for real `href`s and shared links. With the custom domain `base_path` is empty and everything sits at `/`. Meta tags always use `https://ljubijankic.si`.
 - **One-time setup on GitHub:** Settings → Pages → Source: "GitHub Actions". At the switch-over: remove `ljubijankic.si` from the old site's Pages settings, add it here under Settings → Pages → Custom domain, and tick "Enforce HTTPS". No `CNAME` file is needed, because GitHub ignores it for Actions deploys.
