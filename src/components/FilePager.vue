@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, useId, useTemplateRef } from 'vue'
 import { useHead, useSeoMeta } from '@unhead/vue'
-import { loadPage, urlFor, type FileEntry } from '@/lib/fs'
+import { fromUrl, loadPage, urlFor, type FileEntry } from '@/lib/fs'
 import { share } from '@/lib/share'
 import { siteName, siteUrl, withBase } from '@/lib/site'
 import { useTerminalStore } from '@/stores/terminal'
@@ -61,6 +61,18 @@ onUnmounted(() => {
   }
 })
 
+// links to other pages run in the terminal, middle-click still opens the URL
+function followLink(event: MouseEvent) {
+  const link = (event.target as Element).closest('a')
+  if (!link || link.target || link.origin !== location.origin) return
+  const entry = fromUrl(link.pathname.slice(withBase('').length))
+  if (!entry) return
+  event.preventDefault()
+  if (entry.kind === 'file') return store.execute(`open ${entry.path}`)
+  store.closeFile()
+  store.execute([`cd ${entry.path}`, 'ls'])
+}
+
 // odd indexes are the links
 const textParts = typeof page === 'string' ? page.split(/(https?:\/\/\S+)/) : []
 </script>
@@ -73,6 +85,7 @@ const textParts = typeof page === 'string' ? page.split(/(https?:\/\/\S+)/) : []
     shear-="both"
     tabindex="-1"
     :aria-labelledby="titleId"
+    @click.exact="followLink"
   >
     <header>
       <span :id="titleId">{{ file.path }}</span>

@@ -1,21 +1,46 @@
 ---
 title: About me
-description: Who I am and what I do
+description: Backend web developer from Slovenia, working with PHP, Drupal, Python and Rust.
 date: 2026-10-24
 ---
 
 # About me
 
-Placeholder text. Write a few paragraphs about yourself here.
+Hi, I'm Admir Ljubijankić, a mid-senior backend web developer at Agiledrop, based in Slovenia. I've been programming for about 10 years, and professionally since 2020. Most days I work with Drupal and PHP, and I reach for Python or Rust when they're a better fit. I speak Slovenian, English and Bosnian.
 
-# Lorem Ipsum
+## What I work with
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent vel ultrices elit. Proin quis imperdiet ipsum, a porta massa. Praesent vestibulum at nunc id dapibus. In sodales est eu quam pretium, id elementum justo laoreet. Morbi eleifend sodales aliquam. In interdum eros imperdiet ipsum tincidunt, id elementum odio finibus. Morbi dictum ultrices augue, non facilisis leo iaculis sed. Suspendisse ut velit eu nunc condimentum vestibulum pulvinar id sem. Aliquam non tellus diam.
+- **PHP & Drupal** (5+ / 3+ years): I work on Olex.AI and maintain a few Drupal modules. Before that, I looked after a lot of WordPress sites.
+- **Python & Django** (5+ / 3+ years): internal apps that keep companies' systems in sync, and a Django microservice that handles AI calls.
+- **Rust** (something I'll be learning forever): WebAssembly code that reads PDF files and the QR codes inside them, running in production on Olex.AI, and a Tauri desktop app that syncs work logs to Jira and Teamwork from one place.
+- **Linux** (10+ years): servers, containers, shell scripting and system administration, plus Proxmox, cPanel, and MikroTik and Ubiquiti networking.
 
-Cras interdum tortor nec libero placerat gravida. Phasellus ac lectus sollicitudin, pharetra augue vel, condimentum risus. Nam eget risus eros. Aenean consequat semper mauris, nec ullamcorper mauris elementum vel. Nunc nec tincidunt sem. Integer aliquam rhoncus nisl, a condimentum risus semper et. Vivamus rutrum sagittis libero ac vulputate.
+Also:
 
-Vestibulum aliquam ultricies nunc sit amet pulvinar. Phasellus sed gravida augue, in imperdiet nibh. Pellentesque quis ante eget neque eleifend feugiat nec id sem. Sed placerat ligula quam, eu dapibus sem fringilla vel. Curabitur nunc metus, suscipit a porta et, auctor eget lorem. Nullam aliquet convallis tincidunt. Sed ligula mauris, varius at varius congue, ullamcorper a ex. Mauris eros lectus, tristique eu faucibus in, volutpat in lacus. Nunc imperdiet ipsum felis, vel iaculis sapien ornare ac. Quisque luctus massa nec sapien suscipit gravida. Donec porta eros vel libero fringilla gravida. Praesent at metus dignissim, imperdiet dolor id, mollis ipsum. Cras sed metus eu ligula facilisis sagittis. Pellentesque at dictum neque, sit amet laoreet nisi. Nam eu lacus nec quam bibendum blandit at ac ex.
+- Frontend: TypeScript, JavaScript, Vue.js, Tailwind CSS, HTML, CSS
+- Backend: Flask
+- Databases: MySQL, SQLite
+- Tools: Git, Docker, Composer, pip, npm, Yarn
+- Operating systems: Linux, Windows, macOS
 
-Nam a feugiat ante. Donec mattis ut risus quis fermentum. Pellentesque blandit, elit quis laoreet rhoncus, ante mi tempus enim, eu varius ex lectus ut lectus. Maecenas neque metus, accumsan id euismod at, luctus eu nisi. Morbi consectetur purus nisl, scelerisque malesuada enim ultrices id. Pellentesque consequat facilisis mi vitae euismod. Integer interdum, leo id laoreet vulputate, massa odio elementum lacus, at sodales augue leo aliquet justo. Aliquam bibendum diam eu felis varius sollicitudin. Pellentesque porta erat eu tempor consectetur. Nullam vitae neque ac ligula imperdiet pharetra. Ut et nibh leo. Pellentesque sed hendrerit neque, eget varius dui. Suspendisse potenti. Mauris porttitor orci aliquet tortor finibus, sit amet imperdiet ex rutrum. Suspendisse imperdiet urna at ligula laoreet euismod. Nam consectetur, felis non malesuada feugiat, eros nisl ultrices risus, non auctor lectus quam eget massa.
+## Background
 
-Morbi facilisis metus a nulla ultrices vulputate. Mauris a ligula quis leo consequat lacinia eu nec nunc. Phasellus volutpat velit tortor, non feugiat risus lacinia vitae. Phasellus sed libero augue. Morbi mattis ultricies mauris in faucibus. Vestibulum semper, est sit amet congue facilisis, tortor risus accumsan eros, a ultricies ante ligula sit amet ante. Morbi interdum efficitur accumsan. Phasellus venenatis finibus augue, vel viverra est sollicitudin ac. Integer commodo lacus sed aliquam viverra. 
+My first job, in 2020, was meant to be networking and e-commerce shop maintenance. The company soon found out I could program, and started training me as a Python developer for their web projects. Over 3.5 years there, I built Python apps, maintained WordPress sites, and looked after cPanel deployments, Proxmox servers, and MikroTik and Ubiquiti networks.
+
+Since then I've been at Agiledrop as a backend developer, working mostly on Olex.AI across Drupal, Python and Rust.
+
+## How it started
+
+I was about 9 or 10 when I first wanted to make my own game. I started tinkering with my brother's copy of Adobe Flash, and built a small platformer in ActionScript, with some JavaScript on the side. Proper programming came at 15, when I started learning C/C++ in high school, followed by Python at university. That curiosity has stuck with me ever since.
+
+## Outside work
+
+At home I run Arch Linux (yes, I use Arch, BTW) on an all-AMD build: a Ryzen 7 9800X3D and a Radeon RX 9070 XT. Most of my gaming happens there, usually Guild Wars 2 or Skyrim, and getting games to run well on Linux has taught me a lot about troubleshooting and optimization.
+
+Right now I'm learning Tauri and building small apps with it, and I play around with Bevy for small 2D games.
+
+Away from the screen, I take photos with my Fujifilm X-T30.
+
+## Say hi
+
+I'm not actively looking for a new job, but I'm always happy to talk about technology, collaboration or shared interests, whether that's development, Linux, gaming or photography. Feel free to [reach out](./contact.md)!

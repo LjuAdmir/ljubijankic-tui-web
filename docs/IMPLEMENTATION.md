@@ -149,6 +149,7 @@ const texts = import.meta.glob(
 - Vite's globs skip dot paths by default, and the production build (Rolldown's native glob) ignores dot patterns like `{*,.*}` that work in dev. The globs use `exhaustive: true` instead, which includes dotfiles and dot directories (`.secrets.md`, `.ssh/`) at any depth in both dev and build. It also includes `node_modules`, which `content/` never has.
 - `unplugin-vue-markdown` exports each frontmatter field separately. A `frontmatterPreprocess` hook in `vite.config.ts` also exports them as one `frontmatter` object.
 - External links (`http(s)://`) open in a new tab everywhere: a small `markdownSetup` rule in `vite.config.ts` adds `target="_blank" rel="noopener"` to Markdown links, and hand-written links (lifefetch, plain text files) set it themselves. Internal links stay in the same tab.
+- Pages link to each other by file path, like images: `[reach out](./contact.md)`. The same rule rewrites the href to the page's URL (with the deploy base), so prerendered HTML and middle-click get a real link; `FilePager` catches a plain click and runs `open` (or `cd` + `ls` for a folder's `index.md`) instead of reloading.
 - YAML turns `date` into a `Date`, which arrives as an ISO string.
 
 ### `lib/fs.ts` API
@@ -455,7 +456,7 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **6.4** Hidden commands (`hello`/`hi`, `ping`, `hack`) and the Konami code (party mode).
 - [x] **6.5** `.secrets.md` (an easter egg checklist with hints) and `.ssh/` (`norton.jpg`, `id_rsa`, `id_rsa.pub`, `known_hosts` as a commented list of friends' sites). The `rm -rf /` log lists them too.
 - [x] **6.6** Mobile click-first pass: wrapping at spaces, hanging indents for column output, two-row bottom bar without ©, full-width tap targets on touch, `interactive-widget=resizes-content`.
-- [ ] **6.7** Accessibility pass: `OutputAnnouncer` reads each command's output (not the echoed prompt), pager focus in and back out, directories and bottom-bar pages as real links, `main` landmark, link focus outline, darker muted text in latte, tree lines hidden and cowsay described for screen readers.
+- [x] **6.7** Accessibility pass: `OutputAnnouncer` reads each command's output (not the echoed prompt), pager focus in and back out, directories and bottom-bar pages as real links, `main` landmark, link focus outline, darker muted text in latte, tree lines hidden and cowsay described for screen readers.
 
 ## 11. Command → file map
 
