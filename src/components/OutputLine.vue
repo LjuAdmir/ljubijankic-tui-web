@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import type { Component } from 'vue'
+import { computed, type Component } from 'vue'
 import { useTerminalStore, type OutputEntry } from '@/stores/terminal'
-import type { OutputComponent } from '@/commands/types'
+import type { OutputComponent, Segment } from '@/commands/types'
 import PromptLabel from './PromptLabel.vue'
 import LifeFetch from './LifeFetch.vue'
 import ThemeList from './ThemeList.vue'
 import CowSay from './CowSay.vue'
 
-defineProps<{ entry: OutputEntry }>()
+const props = defineProps<{ entry: OutputEntry }>()
 
 const components: Record<OutputComponent, Component> = {
   lifefetch: LifeFetch,
@@ -16,10 +16,30 @@ const components: Record<OutputComponent, Component> = {
 }
 
 const store = useTerminalStore()
+
+const segments = computed<Segment[]>(() => (props.entry.kind === 'line' ? props.entry.line : []))
+
+// wrapped lines continue under the `hang` segment, so columns (ls, help) stay aligned
+const indent = computed(() => {
+  const index = segments.value.findIndex((segment) => 'hang' in segment && segment.hang)
+  if (index < 0) return undefined
+  const width = segments.value
+    .slice(0, index)
+    .reduce((sum, segment) => sum + segment.text.length, 0)
+  return { paddingLeft: `${width}ch`, textIndent: `-${width}ch` }
+})
+
+// a line with one link or command is tappable across its whole width on touch screens
+const single = computed(
+  () =>
+    segments.value.filter(
+      (segment) => 'command' in segment || 'fill' in segment || 'href' in segment,
+    ).length === 1,
+)
 </script>
 
 <template>
-  <div class="output-line">
+  <div :class="['output-line', { single }]" :style="indent">
     <template v-if="entry.kind === 'prompt'">
       <PromptLabel :cwd="entry.cwd" />{{ entry.input }}
     </template>
@@ -65,10 +85,27 @@ const store = useTerminalStore()
 .output-line {
   min-height: 1lh;
   white-space: pre-wrap;
+  /* WebTUI breaks anywhere; break at spaces, and inside a word only when it doesn't fit */
+  word-break: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (pointer: coarse) {
+  .single {
+    position: relative;
+  }
+
+  .single :is(.command, a)::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
 }
 
 .command {
   all: unset;
+  /* buttons stay inline-blocks, so they'd apply the line's hanging indent to their own text */
+  text-indent: 0;
   cursor: pointer;
   text-decoration: underline;
 }

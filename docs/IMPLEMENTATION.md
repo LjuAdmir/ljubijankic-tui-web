@@ -209,12 +209,14 @@ Commands never touch the DOM. They print **lines made of segments**, and `Output
 ```ts
 type Style = 'dir' | 'file' | 'error' | 'muted' | 'accent'
 type Segment =
-  | { text: string; style?: Style }
+  | { text: string; style?: Style; hang?: boolean }                 // hang: wrapped lines continue under it
   | { text: string; command: string | string[]; style?: Style }   // clickable, runs the command(s) in order
   | { text: string; href: string }      // real link (files)
   | { text: string; fill: string; style?: Style }    // clickable, puts the text in the prompt (Tab candidates)
 type Line = Segment[]
 ```
+
+`hang` marks where wrapped lines continue: `OutputLine` sums the text before it and sets `padding-left` plus a negative `text-indent` of that many `ch`, so `ls`, `tree` and `help` descriptions wrap inside their column. Output wraps at spaces (`word-break: normal; overflow-wrap: anywhere`), overriding WebTUI's `break-all`. On touch screens (`pointer: coarse`), a line with exactly one link or command stretches it over the whole line with an `::after`; lines with several stay as they are, so no target covers another.
 
 So `ls` returns file names as `href` segments (real links, see §7) and directories as `command` segments (`cd projects`).
 
@@ -449,8 +451,8 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **6.2** Toys: `cowsay`, `fortune`.
 - [x] **6.3** Programs: `program` mode, `sl` and `matrix` (any key or `Ctrl+C` stops them; reduced motion respected).
 - [x] **6.4** Hidden commands (`hello`/`hi`, `ping`, `hack`) and the Konami code (party mode).
-- [ ] **6.5** `.secrets.md` (an easter egg checklist with hints) and `.ssh/` (`norton.jpg`, `id_rsa`, `id_rsa.pub`, `known_hosts` as a commented list of friends' sites). The `rm -rf /` log lists them too.
-- [ ] **6.6** Mobile click-first pass.
+- [x] **6.5** `.secrets.md` (an easter egg checklist with hints) and `.ssh/` (`norton.jpg`, `id_rsa`, `id_rsa.pub`, `known_hosts` as a commented list of friends' sites). The `rm -rf /` log lists them too.
+- [ ] **6.6** Mobile click-first pass: wrapping at spaces, hanging indents for column output, two-row bottom bar without ©, full-width tap targets on touch, `interactive-widget=resizes-content`.
 - [ ] **6.7** Accessibility pass (`aria-live`, focus handling, real links, reduced motion).
 
 ## 11. Command → file map

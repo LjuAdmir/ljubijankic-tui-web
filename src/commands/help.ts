@@ -38,7 +38,8 @@ export default {
       commands.map((command): Line => [
         { text: '  ' },
         { text: command.name, command: `help ${command.name}` },
-        { text: ' '.repeat(width - command.name.length) + command.summary },
+        { text: ' '.repeat(width - command.name.length) },
+        { text: command.summary, hang: true },
       ])
 
     const lines: Line[] = [

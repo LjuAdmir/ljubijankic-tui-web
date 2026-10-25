@@ -9,7 +9,8 @@ function format(entry: Entry, label: string, width: number): Line {
   return [
     { text: `${type}  ${date.padEnd(10)}  `, style: 'muted' },
     entrySegment(entry, label),
-    { text: `${' '.repeat(width - label.length + 2)}${entry.meta.description ?? '—'}` },
+    { text: ' '.repeat(width - label.length + 2) },
+    { text: entry.meta.description ?? '—', hang: true },
   ]
 }
 

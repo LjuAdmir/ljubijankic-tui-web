@@ -250,6 +250,10 @@ On desktop the page captures the keyboard: typing anywhere goes to the prompt.
 - The prompt does not auto-focus on touch devices, so the keyboard doesn't pop up by itself.
 - Tapping the prompt opens the keyboard for typing.
 - The bottom bar and clickable output are the main way to navigate.
+- Text wraps at spaces, not mid-word. Column output (`ls`, `tree`, `help`) wraps with a hanging indent, so descriptions stay in their column.
+- Below 48rem the bottom bar's buttons wrap into two rows and the © is hidden.
+- On touch screens, a line with a single link or command (an `ls` row, a `help` row) is tappable across its whole width, without changing how it looks.
+- When the keyboard opens, the layout shrinks to fit above it (Android; iOS scrolls the prompt into view itself).
 
 ## 11. Themes
 

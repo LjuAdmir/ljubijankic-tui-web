@@ -77,4 +77,20 @@ nav a {
 .copyright {
   color: var(--foreground2);
 }
+
+/* phones: all buttons wrap together into two rows, the © makes room */
+@media (max-width: 48rem) {
+  .bottom-bar {
+    justify-content: flex-start;
+  }
+
+  nav,
+  .end {
+    display: contents;
+  }
+
+  .copyright {
+    display: none;
+  }
+}
 </style>

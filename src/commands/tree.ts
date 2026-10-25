@@ -47,11 +47,12 @@ export default {
       [entrySegment(target, target.path)],
       ...rows.map(({ prefix, entry, label }): Line => {
         const description = entry.meta.description
-        const padding = ' '.repeat(width - prefix.length - label.length + 2)
+        const padding = description ? ' '.repeat(width - prefix.length - label.length + 2) : ''
         return [
           { text: prefix, style: 'muted' },
           entrySegment(entry, label),
-          { text: description ? padding + description : '', style: 'muted' },
+          { text: padding },
+          { text: description ?? '', style: 'muted', hang: true },
         ]
       }),
       [],
