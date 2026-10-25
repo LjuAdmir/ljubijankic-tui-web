@@ -28,22 +28,20 @@ export interface DirEntry {
 
 export type Entry = DirEntry | FileEntry
 
-const meta = import.meta.glob<Meta>(['/content/**/{*,.*}.md', '/content/.*/**/{*,.*}.md'], {
+// exhaustive: Vite's build skips dotfiles (.secrets.md, .ssh/) otherwise, while dev doesn't
+const meta = import.meta.glob<Meta>('/content/**/*.md', {
   eager: true,
   import: 'frontmatter',
+  exhaustive: true,
 })
-const pages = import.meta.glob<Component>(['/content/**/{*,.*}.md', '/content/.*/**/{*,.*}.md'], {
+const pages = import.meta.glob<Component>('/content/**/*.md', {
   query: '?page',
   import: 'default',
+  exhaustive: true,
 })
 const texts = import.meta.glob<string>(
-  [
-    '/content/**/{*,.*}',
-    '/content/.*/**/{*,.*}',
-    '!/content/**/{*,.*}.{md,png,jpg,jpeg,webp,gif,svg,avif}',
-    '!/content/.*/**/{*,.*}.{md,png,jpg,jpeg,webp,gif,svg,avif}',
-  ],
-  { query: '?raw', import: 'default' },
+  ['/content/**/*', '!/content/**/*.{md,png,jpg,jpeg,webp,gif,svg,avif}'],
+  { query: '?raw', import: 'default', exhaustive: true },
 )
 
 export function buildTree(meta: Record<string, Meta>, texts: string[]): DirEntry {

@@ -145,7 +145,7 @@ const texts = import.meta.glob(
 - `meta` is bundled upfront and is small: it builds the tree used by `ls`, `tree`, `cd`, and completion.
 - `pages` and `texts` are lazy: content is only loaded when a file is opened. `pages` imports with `?page` (also added to the Markdown plugin's `include`), so it is a separate module from the eager `meta` import. Without it, the eager import pulls every page into the main bundle and the lazy chunks are never split off. The keys of `texts` are known upfront, so plain text files still appear in the tree.
 - Directory entries are derived from file paths, with metadata from their `index.md`.
-- Vite's globs skip dot paths by default. `{*,.*}` adds dotfiles, and the `/content/.*/**` patterns add top-level dot directories like `.ssh/`. Negations need the same forms. Dot directories nested deeper (`projects/.drafts/`) are not picked up.
+- Vite's globs skip dot paths by default, and the production build (Rolldown's native glob) ignores dot patterns like `{*,.*}` that work in dev. The globs use `exhaustive: true` instead, which includes dotfiles and dot directories (`.secrets.md`, `.ssh/`) at any depth in both dev and build. It also includes `node_modules`, which `content/` never has.
 - `unplugin-vue-markdown` exports each frontmatter field separately. A `frontmatterPreprocess` hook in `vite.config.ts` also exports them as one `frontmatter` object.
 - External links (`http(s)://`) open in a new tab everywhere: a small `markdownSetup` rule in `vite.config.ts` adds `target="_blank" rel="noopener"` to Markdown links, and hand-written links (lifefetch, plain text files) set it themselves. Internal links stay in the same tab.
 - YAML turns `date` into a `Date`, which arrives as an ISO string.
@@ -448,9 +448,8 @@ Each milestone ends with something runnable. Each milestone is split into small 
 - [x] **6.1** Gags: `sudo`, `rm -rf /`, `exit`, `vim`/`emacs`.
 - [x] **6.2** Toys: `cowsay`, `fortune`.
 - [x] **6.3** Programs: `program` mode, `sl` and `matrix` (any key or `Ctrl+C` stops them; reduced motion respected).
-- [ ] **6.4** Hidden commands (`hello`/`hi`, `ping`, `hack`) and the Konami code (party mode).
-- [ ] **6.5** `.secrets.md` and `.ssh/` (`norton.jpg`, `id_rsa`, `id_rsa.pub`, `known_hosts`).
-  > **Decision needed:** the contents of `.secrets.md` and the friends' links for `known_hosts`.
+- [x] **6.4** Hidden commands (`hello`/`hi`, `ping`, `hack`) and the Konami code (party mode).
+- [ ] **6.5** `.secrets.md` (an easter egg checklist with hints) and `.ssh/` (`norton.jpg`, `id_rsa`, `id_rsa.pub`, `known_hosts` as a commented list of friends' sites). The `rm -rf /` log lists them too.
 - [ ] **6.6** Mobile click-first pass.
 - [ ] **6.7** Accessibility pass (`aria-live`, focus handling, real links, reduced motion).
 

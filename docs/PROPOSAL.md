@@ -82,11 +82,11 @@ The site's content is a small filesystem. Home (`~`) is the root. Example:
 ~
 ├── about.md
 ├── contact.md
-├── .secrets.md         (hidden, easter egg)
+├── .secrets.md         (hidden, a checklist of hints to the other easter eggs)
 ├── .ssh/               (hidden, joke)
 │   ├── id_rsa          (opens the "I got Norton" meme)
 │   ├── id_rsa.pub      (opens the same meme)
-│   └── known_hosts     (plain text, links to friends' websites)
+│   └── known_hosts     (plain text: a '# hosts I trust' comment, then friends' websites)
 ├── projects/
 │   ├── tui-portfolio.md
 │   └── some-project.md
@@ -266,6 +266,5 @@ On desktop the page captures the keyboard: typing anywhere goes to the prompt.
 
 ## 13. Open items
 
-1. Friends' links in `known_hosts` (§4)
-2. Contact details: Admir fills these in directly in `contact.md`
-3. Additional themes: later, not v1 (§11)
+1. Contact details: Admir fills these in directly in `contact.md`
+2. Additional themes: later, not v1 (§11)
